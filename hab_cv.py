@@ -23,10 +23,10 @@ def smooth(img,radius,kind='open'):
     return img
 
 
-def mask_color(img,dark_limit,light_limit,radius):
+def mask_color(img,limits,radius):
     hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS_FULL)
-    dark_limit,light_limit = np.array(dark_limit,dtype='uint8'),np.array(light_limit,dtype='uint8')
-    mask = cv2.inRange(hls,dark_limit,light_limit)
+    lower_limit,upper_limit = np.array(limits[0],dtype='uint8'),np.array(limits[1],dtype='uint8')
+    mask = cv2.inRange(hls,lower_limit,upper_limit)
     mask=smooth(mask,radius,kind='close')
     masked_img = cv2.bitwise_and(img,img,mask=mask)
     return mask, masked_img
@@ -35,7 +35,7 @@ def mask_color(img,dark_limit,light_limit,radius):
 def main():
     sources=['file','screen']
     # TOGGLE VIEWING MODE
-    source=sources[0]
+    source=sources[1]
 
     if source=='file':
         video_file = cv2.VideoCapture('images/HAB2 Complete GoPro Footage.mp4')
@@ -61,12 +61,14 @@ def main():
         # range: 0 to 255
         # SEE: color_previewer()
         smoothing_amount=2
-        dark_green,light_green=[35,5,35],[100,140,255]
-        veg_mask,veg = mask_color(screen,dark_green,light_green,smoothing_amount)
+        veg_range=([35,5,35],[100,140,255])
+        veg_mask,veg = mask_color(screen,veg_range,smoothing_amount)
 
-        dark_blue,light_blue=[160 ],[245,90,100]
         cv2.imshow('mask',veg_mask)
         cv2.imshow('greens',veg)
+
+        water_range=([85,35,60],[125,175,255])
+        urban_range=([0,0,0],[255,255,35])
 
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
