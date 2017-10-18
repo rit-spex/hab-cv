@@ -32,7 +32,7 @@ def mask_color(img,limits,radius):
     return mask, masked_img
 
 
-def main():
+def map_channel(selection='vegetation'):
     sources=['file','screen']
     # TOGGLE VIEWING MODE
     source=sources[1]
@@ -61,14 +61,15 @@ def main():
         # range: 0 to 255
         # SEE: color_previewer()
         smoothing_amount=2
-        veg_range=([35,5,35],[100,140,255])
-        veg_mask,veg = mask_color(screen,veg_range,smoothing_amount)
 
-        cv2.imshow('mask',veg_mask)
-        cv2.imshow('greens',veg)
+        ranges={'vegetation':([35,5,35],[120,140,255]),
+                'water':([120,35,20],[180,175,255]),
+                'urban':([0,0,0],[255,255,20])
+                }
+        mask,masked_img = mask_color(screen,ranges[selection],smoothing_amount)
 
-        water_range=([85,35,60],[125,175,255])
-        urban_range=([0,0,0],[255,255,35])
+        cv2.imshow(selection+' mask',mask)
+        cv2.imshow(selection,masked_img)
 
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
@@ -105,4 +106,4 @@ def color_previewer():
 
 
 # color_previewer()
-main()
+map_channel('water')
