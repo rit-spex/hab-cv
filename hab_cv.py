@@ -79,7 +79,7 @@ while True:
             break
     cv2.imshow('RGB', screen)
 
-    selection = 'water'
+    selection = 'vegetation'
 
     mask,masked_img = hsl_mask(screen,selection,2)
     cv2.imshow(selection+' mask',mask)
