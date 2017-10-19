@@ -48,43 +48,46 @@ def hsl_mask(img, selection='vegetation', smoothing=2):
 def ndvi(img_nir):
     nir,g,r = cv2.split(img_nir) #RGB --> IR G R ?
 
-    num = nir.astype(float)+r.astype(float)
+    num = nir.astype(float)-r.astype(float)
     den = nir.astype(float)+r.astype(float)
     den[den==0] = np.finfo(float).eps # very small number instead of zero
 
     ndvi = num/den
     return ndvi
 
-sources=['file','screen']
-# TOGGLE VIEWING MODE
-source=sources[1]
 
-if source=='file':
-    video_file = cv2.VideoCapture('images/HAB2 Complete GoPro Footage.mp4')
-while True:
-    ## SCREENSHOT
-    if source=='screen':
-        screen = np.array(ImageGrab.grab(bbox=(350, 200, 750, 750)))
-        screen = cv2.cvtColor(screen, cv2.COLOR_RGB2BGR)
-
-    # FROM FILE
+def cap(source='screen',selection='vegetation'):
     if source=='file':
-        if video_file.isOpened():
-            isValid,screen = video_file.read()
-        else:
+        video_file = cv2.VideoCapture('images/HAB2 Complete GoPro Footage.mp4')
+    while True:
+        ## SCREENSHOT
+        if source=='screen':
+            screen = np.array(ImageGrab.grab(bbox=(350, 200, 750, 750)))
+            screen = cv2.cvtColor(screen, cv2.COLOR_RGB2BGR)
+
+        # FROM FILE
+        if source=='file':
+            if video_file.isOpened():
+                isValid,screen = video_file.read()
+            else:
+                cv2.destroyAllWindows()
+                break
+            if not isValid:
+                cv2.destroyAllWindows()
+                break
+        cv2.imshow('RGB', screen)
+
+        mask,masked_img = hsl_mask(screen,selection,2)
+        cv2.imshow(selection+' mask',mask)
+        cv2.imshow(selection,masked_img)
+
+        if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
             break
-        if not isValid:
-            cv2.destroyAllWindows()
-            break
-    cv2.imshow('RGB', screen)
 
-    selection = 'vegetation'
 
-    mask,masked_img = hsl_mask(screen,selection,2)
-    cv2.imshow(selection+' mask',mask)
-    cv2.imshow(selection,masked_img)
 
-    if cv2.waitKey(25) & 0xFF == ord('q'):
-        cv2.destroyAllWindows()
-        break
+# TOGGLE VIEWING MODE
+source='screen' # or 'file' or 'picamera'
+selection = 'vegetation'
+cap(source,selection)
