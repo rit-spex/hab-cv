@@ -24,6 +24,13 @@ def smooth(img,radius,kind='open'):
     return img
 
 
+def mask_as_color(binary_mask, bgr_color):
+    bgr_mask=np.zeros((binary_mask.shape[0],binary_mask.shape[1],3))
+    for i in range(len(bgr_color)):
+        bgr_mask[:,:,i]=binary_mask*bgr_color[i]
+    return bgr_mask
+
+
 def mask_color(img,limits,radius=1):
     hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS_FULL)
     lower_limit,upper_limit = np.array(limits[0],dtype='uint8'),np.array(limits[1],dtype='uint8')
@@ -77,7 +84,6 @@ def cap(source='screen',selection='vegetation'):
                 break
 
         mask,masked_img = hsl_mask(screen,selection,2)
-
         cv2.imshow('RGB', screen)
         cv2.imshow(selection+' mask',mask)
         cv2.imshow(selection,masked_img)
