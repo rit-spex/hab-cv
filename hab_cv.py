@@ -41,19 +41,19 @@ def hsl_mask(img, selection='vegetation', smoothing=2):
                 'water':([120,35,20],[180,175,255]),
                 'urban':([0,0,0],[255,255,20])
                 }
-        mask,masked_img = mask_color(img,ranges[selection],smoothing)
-        return mask,masked_img
+        mask, masked_img = mask_color(img,ranges[selection],smoothing)
+        return mask, masked_img
 
 
-def ndvi(img_nir):
-    nir,g,r = cv2.split(img_nir) #RGB --> IR G R ?
+def ndvi(img_color,img_nir):
+    nir = cv2.cvtColor(img_nir,cv2.COLOR_RGB2GRAY)
+    r,g,b = cv2.split(img_color)
 
     num = nir.astype(float)-r.astype(float)
     den = nir.astype(float)+r.astype(float)
     den[den==0] = np.finfo(float).eps # very small number instead of zero
 
-    ndvi = num/den
-    return ndvi
+    return np.divide(num,den)
 
 
 def cap(source='screen',selection='vegetation'):
@@ -75,9 +75,10 @@ def cap(source='screen',selection='vegetation'):
             if not isValid:
                 cv2.destroyAllWindows()
                 break
-        cv2.imshow('RGB', screen)
 
         mask,masked_img = hsl_mask(screen,selection,2)
+
+        cv2.imshow('RGB', screen)
         cv2.imshow(selection+' mask',mask)
         cv2.imshow(selection,masked_img)
 
