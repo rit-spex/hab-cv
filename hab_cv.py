@@ -78,7 +78,10 @@ while True:
             cv2.destroyAllWindows()
             break
     cv2.imshow('RGB', screen)
-    mask,masked_img = hsl_mask('water',screen)
+
+    selection = 'water'
+
+    mask,masked_img = hsl_mask(screen,selection,2)
     cv2.imshow(selection+' mask',mask)
     cv2.imshow(selection,masked_img)
 
