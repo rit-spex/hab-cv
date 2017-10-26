@@ -1,8 +1,12 @@
-
-import io
-import picamera
 import numpy as np
 import cv2
+from PIL import ImageGrab
+
+def threshold(grayscaled_img, blur_radius):
+    img = smooth(img, 5, kind='gaussian')
+    ret, th = cv2.threshold(img, 125, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    return ret, th
+
 
 def smooth(img, radius, kind='open'):
     kernel = np.ones((radius, radius), np.uint8)
@@ -35,7 +39,7 @@ def mask_color(img, limits, radius=1):
     return mask, masked_img
 
 
-def get_hsl_mask(img, selection='vegetation', smoothing=2):
+def hsl_mask(img, selection='vegetation', smoothing=2):
     # LIMITS IN HLS - Hue, Lightness, Saturation
     # range: 0 to 255
     # SEE: color_previewer()
@@ -58,10 +62,46 @@ def ndvi(img_color, img_nir):
     return np.divide(num, den)
 
 
-def cap(selection='vegetation', stream=False):
-    if stream: stream = io.BytesIO()
+def cap(source='screen', selection='vegetation'):
+    if source == 'file':
+        video_file = cv2.VideoCapture('images/HAB2 Complete GoPro Footage.mp4')
     while True:
-        image = np.array()
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        ## SCREENSHOT
+        if source == 'screen':
+            screen = np.array(ImageGrab.grab(bbox=(350, 200, 750, 750)))
+            screen = cv2.cvtColor(screen, cv2.COLOR_RGB2BGR)
 
-        mask, masked_img = get_hsl_mask(image, selection, 2)
+        # FROM FILE
+        if source == 'file':
+            if video_file.isOpened():
+                isValid, screen = video_file.read()
+            else:
+                cv2.destroyAllWindows()
+                break
+            if not isValid:
+                cv2.destroyAllWindows()
+                break
+
+        mask, masked_img = hsl_mask(screen, selection, 2)
+        cv2.imshow('RGB', screen)
+        cv2.imshow(selection + ' mask', mask)
+        cv2.imshow(selection, masked_img)
+
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+            break
+
+rgb=cv2.imread('images/RGB-test.jpg')
+ir=cv2.imread('images/IR-test.jpg')
+while(True):
+    cv2.imshow('rgb', cv2.cvtColor(rgb,cv2.COLOR_RGB2BGR))
+    cv2.imshow('ir', cv2.cvtColor(ir,cv2.COLOR_RGB2BGR))
+    cv2.imshow('ndvi',ndvi(rgb,ir))
+
+    if cv2.waitKey(25) & 0xFF == ord('q'):
+        cv2.destroyAllWindows()
+        break
+# # TOGGLE VIEWING MODE
+# source = 'screen'  # or 'file' or 'picamera'
+# selection = 'vegetation'
+# cap(source, selection)
