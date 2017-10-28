@@ -9,8 +9,7 @@ sudo apt-get install libdc1394-22-dev libv4l-dev
 
 sudo apt-get install python-numpy
 sudo apt-get install libopencv-dev python-opencv python-dev
-sudo apt-get install python-picamera
-```
+sudo pip3 install "picamera[array]"
 
-## Debugging the Video Stream
-http://petrkout.com/electronics/low-latency-0-4-s-video-streaming-from-raspberry-pi-mjpeg-streamer-opencv/
+sudp pip3 install imutils
+```
