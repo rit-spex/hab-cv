@@ -1,6 +1,4 @@
-## Dependencies
-Python 3.6.3
-```
+## Installing Dependencies
 sudo apt-get update
 sudo apt-get install cmake build-essential pkg-config
 sudo apt-get install libgtk2.0-dev libtbb-dev

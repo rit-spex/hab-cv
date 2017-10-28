@@ -54,6 +54,7 @@ def hsl_mask(img, selection='vegetation', smoothing=2):
 def ndvi(img_color, img_nir):
     nir = cv2.cvtColor(img_nir, cv2.COLOR_RGB2GRAY)
     r, g, b = cv2.split(img_color)
+    r = cv2.cvtColor(img_color, cv2.COLOR_RGB2GRAY)
 
     num = nir.astype(float) - r.astype(float)
     den = nir.astype(float) + r.astype(float)

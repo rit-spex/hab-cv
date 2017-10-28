@@ -3,6 +3,7 @@ import io
 import picamera
 import numpy as np
 import cv2
+import imutils
 
 def smooth(img, radius, kind='open'):
     kernel = np.ones((radius, radius), np.uint8)
