@@ -1,10 +1,12 @@
+# Capture video from Raspberry Pi 3 and generate a green hue binary mask
+# Philip Linden
+# October 29, 2017
 from __future__ import print_function
 from imutils.video.pivideostream import PiVideoStream
 from imutils.convenience import resize
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import numpy as np
-import datetime
 import time
 import cv2
 import numpy as np
@@ -18,10 +20,11 @@ class FrameReader():
         self.stopped = True
 
     def run(self):
+        logging.debug('started FrameReader')
         while not self.stopped:
             if not q.full():
                 frame=stream.read()
-                framename=datetime.datetime.now().time().strftime("%Y%m%d-%H%M%S")
+                framename=str(int(time.time()*10000000))
                 cv2.imwrite('raw/'+framename+'.jpg',frame)
                 q.put((frame,framename))
             else: logging.debug('Queue is full ('+str(q.qsize())+'frames)')
@@ -47,10 +50,10 @@ class FrameMasker(threading.Thread):
         while not self.stopped:
             if not q.empty():
                 (frame, framename) = q.get()
-                frame = resize(frame, width=300)
+                # frame = resize(frame, width=256)
                 mask = get_hsl_mask(frame)
                 cv2.imwrite('mask/'+framename+'.jpg',mask)
-            else: logging.debug('Queue is empty!')
+            # else: logging.debug('Queue is empty!')
 
     def start(self):
         self.stopped = False
@@ -59,8 +62,12 @@ class FrameMasker(threading.Thread):
         t.start()
 
     def stop(self):
-        self.stopped = True
-        logging.debug('stopped FrameMasker')
+        logging.debug('masking remaining frames...')
+        while(True):
+            if q.empty():
+                self.stopped = True
+                logging.debug('stopped FrameMasker')
+                break
 
 def hsl_mask(img, limits):
     hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS_FULL)
@@ -79,20 +86,10 @@ def get_hsl_mask(img, selection='vegetation'):
     mask = hsl_mask(img, ranges[selection])
     return mask
 
-# def ndvi(img_color, img_nir):
-#     nir = cv2.cvtColor(img_nir, cv2.COLOR_RGB2GRAY)
-#     r, g, b = cv2.split(img_color)
-#
-#     num = nir.astype(float) - r.astype(float)
-#     den = nir.astype(float) + r.astype(float)
-#     den[den == 0] = np.finfo(float).eps  # very small number instead of zero
-#
-#     return np.divide(num, den)
-
 def stopAll(stream,reader,masker):
     reader.stop()
-    masker.stop()
     stream.stop()
+    masker.stop()
     return
 
 if __name__ == '__main__':
@@ -104,12 +101,15 @@ if __name__ == '__main__':
     framerate=60
     logging.debug('started threaded video stream ('+str(resolution)+','+str(framerate)+' fps)')
     stream = PiVideoStream(resolution=resolution,framerate=framerate).start()
-    for i in reversed(range(1,6)):
+    for i in reversed(range(1,4)):
         logging.debug('starting capture & processing in '+str(i)+' seconds')
         time.sleep(1)
     reader,masker=FrameReader(),FrameMasker()
     reader.start()
     masker.start()
 
-    time.sleep(10)
-    stopAll(stream,reader,masker)
+    while(True):
+        user_input = input('Stop the stream?: ')
+        if user_input:
+            stopAll(stream,reader,masker)
+            break
