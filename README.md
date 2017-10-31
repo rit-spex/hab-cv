@@ -17,7 +17,12 @@ sudo apt-get install python-dev python3-dev python-numpy python-scipy
 sudo apt-get install libopencv-dev python-opencv
 sudo pip3 install "picamera[array]"
 
-sudp pip3 install imutils
+sudo pip3 install imutils
+
+git clone https://github.com/RIT-Space-Exploration/hab-cv.git
+cd hab-cv
+mkdir raw
+mkdir mask
 ```
 
 ## Approach
@@ -46,10 +51,6 @@ If either of these conditions are reached, the script obviously is halted and do
 
 ## Running the Script
 ```
-git clone https://github.com/RIT-Space-Exploration/hab-cv.git
-cd hab-cv
-mkdir raw
-mkdir mask
 python3 hab_cv.py
 ```
 Each raw video frame is saved in the `raw` folder. 
