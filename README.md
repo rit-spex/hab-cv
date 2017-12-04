@@ -1,6 +1,9 @@
 # Capturing and Masking Images from Raspberry Pi 3 + Pi Camera
 This script starts a video stream, samples "raw" video frames and saves them with single frame compression, and generates a binary mask according to an HSL color range and saves the mask corresponding to each video frame with single frame compression.
 
+This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems.
+Overarching goals and long-term visions for future work is outlined in the following Project Definition Document:  https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
+
 ## Requirements & Dependencies
 Raspberry Pi 3 Model B + Raspbian Stretch Lite (OS)
 Raspberry Pi Camera Module v2 (or Pi Camera NoIR v2)
@@ -36,7 +39,7 @@ Each iteration of the looped read process, the most recent frame of the continuo
 The frame (a 640 x 480 x 3 numpy array) and its label (`time.time()` as a formatted string) are pushed to a queue as a tuple.
 
 3. A thread is opened to pop frames from the queue, apply a color mask and save that mask as fast as possible.
-Each iteration of the looped mask process, the first tuple of the FIFO queue (frame array and its name) is popped from the queue. 
+Each iteration of the looped mask process, the first tuple of the FIFO queue (frame array and its name) is popped from the queue.
 The frame colorspace is converted to hue-saturation-lightness (HSL) and a pixel-wise binary mask is generated.
 Any pixel within the given tunable HSL value range is given a value of 1, all other pixels are given a value of 0.
 The binary mask is saved as a JPEG image.
@@ -53,7 +56,7 @@ If either of these conditions are reached, the script obviously is halted and do
 ```
 python3 hab_cv.py
 ```
-Each raw video frame is saved in the `raw` folder. 
+Each raw video frame is saved in the `raw` folder.
 Each corresponding mask is saved in the `mask` folder.
 
 Press any key then Enter to close the video stream and stop all processes.
