@@ -72,6 +72,7 @@ cd hab-cv
 mkdir raw
 mkdir mask
 ```
+For help installing OpenCV 3.3.x to a Raspberry Pi with Raspbian Stretch, consult [this great tutorial from PyImageSearch.com](https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/).
 
 ## Running the Script
 ```
