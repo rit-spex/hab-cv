@@ -1,4 +1,4 @@
-# Capturing and Masking Images from Raspberry Pi 3 + Pi Camera
+# Where U At Plants? (WUAP): Capturing and Masking Images from Raspberry Pi 3 + Pi Camera
 Where U At Plants? (WUAP) is a high-altitude balloon payload used to gather aerial image data for future vegetation density analysis. WUAP uses on-board image processing with a Raspberry Pi 3, Python 3 and OpenCV 3.3 to mask RGB images of the Earth and attempts to mask areas of high vegetation using colorspace transformations.
 
 This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems.
@@ -20,8 +20,12 @@ While on-board processing is a secondary objective, we aim to demonstrate its us
 Vegetation is identified two ways: Identification by color from visible-light images, and using the Normalized Vegetation Density Index from vilisble-light and near-infrared images.
 
 ## Identification by Color
+(This is the image processing algorithm executed in-flight.)
 
 ## Normalized Vegetation Density Index
+(This is an algorithm which will be used on future flights.)
+
+See also: https://earthobservatory.nasa.gov/Features/MeasuringVegetation/measuring_vegetation_2.php
 
 # Approach
 On the main thread, values are initialized and 3 threads are opened to capture, process, and save image frames concurrently.
