@@ -4,6 +4,8 @@ Where U At Plants? (WUAP) is a high-altitude balloon payload used to gather aeri
 This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems.
 Overarching goals and long-term visions for future work is outlined in the following Project Definition Document:  https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
 
+![WUAP Mission Patch](wuap.jpg)
+
 ## What does it do?
 This script starts a video stream, samples "raw" video frames and saves them with single frame compression, and generates a binary mask according to an HSL color range and saves the mask corresponding to each video frame with single frame compression.
 
