@@ -4,7 +4,8 @@ Where U At Plants? (WUAP) is a high-altitude balloon payload used to gather aeri
 This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems.
 Overarching goals and long-term visions for future work is outlined in the following Project Definition Document:  https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
 
-![WUAP Mission Patch](wuap.jpg)
+![WUAP Mission Patch](readme_assets/wuap.jpg)
+![Example of HSL vegetation masking with HAB2 flight images](readme_assets/hsl_test2.gif)
 
 ## What does it do?
 This script starts a video stream, samples "raw" video frames and saves them with single frame compression, and generates a binary mask according to an HSL color range and saves the mask corresponding to each video frame with single frame compression.
@@ -17,17 +18,6 @@ First and foremost, this project aims to _collect data_ in the form of as many i
 More advanced analysis can be performed later on the ground, and more time can be spent developing and testing new algorithms for future flights.
 
 While on-board processing is a secondary objective, we aim to demonstrate its usefulness with simple image processing algorithms performed in-flight.
-
-# Research
-Vegetation is identified two ways: Identification by color from visible-light images, and using the Normalized Vegetation Density Index from vilisble-light and near-infrared images.
-
-## Identification by Color
-(This is the image processing algorithm executed in-flight.)
-
-## Normalized Vegetation Density Index
-(This is an algorithm which will be used on future flights.)
-
-See also: https://earthobservatory.nasa.gov/Features/MeasuringVegetation/measuring_vegetation_2.php
 
 # Approach
 On the main thread, values are initialized and 3 threads are opened to capture, process, and save image frames concurrently.
@@ -89,3 +79,53 @@ Each corresponding mask is saved in the `mask` folder.
 
 Press any key then Enter to close the video stream and stop all processes.
 The masking process will mask the remaining frames in the queue before closing.
+
+# Basis for Experiment
+Vegetation is identified two ways: Identification by color from visible-light images, and using the Normalized Vegetation Density Index from vilisble-light and near-infrared images.
+
+## Identification by Color
+_This is the image processing algorithm executed in-flight._
+
+Plants are (mostly) green. Roads, buildings, and bodies of water (mostly) aren't.
+This is the core principle for identifying vegetation from RGB aerial imagery.
+While it is difficult to judge vegetation _density_ this way, it is fairly simple to identify vegetation from inorganic structures and generate a binary mask.
+
+Thanks to chlorophyll and natural selection, plants come in a variety greenish colors.
+To account for different brightnesses and a range of yellow-greens to blue-greens.
+We can extend the acceptable range to some browns as well.
+By changing our image colorspace from Red-Green-Blue (RGB) as captured by the picamera, to Hue-Lightness-Saturation (HLS) we can limit our mask's accepted _hue_ range while leaving _lightness_ and _saturation_ to allow wide ranges, thus allowing light blue greens to dark yellow greens all to register as vegetation.
+
+For now, we visually tweak these ranges using [past flight video from HAB2](https://youtu.be/U40UZp3Z3a4?t=71), but in the future it is reasonable to assume another algoritm might be used for this calibration.
+Not all plants are green, and not all green areas are vegetation. Despite this, initial testing demonstrates that a simple HSL masking of aerial imagery yields decent results.
+
+![Example of HSL vegetation masking with Google Maps](readme_assets/hsl_test.gif)
+
+## Normalized Vegetation Density Index (NDVI
+_(This is an algorithm which will be used on future flights.)_
+
+A more precise method of measuring vegetation density is through spectroscopy.
+To the naked eye, we see the reflected wavelengths of green that chlorophyll in vegetation reflects.
+However, plants respond quite strikingly in the infrared portion of the spectrum as well.
+
+> The pigment in plant leaves, chlorophyll, strongly absorbs visible light (from 0.4 to 0.7 µm) for use in photosynthesis. The cell structure of the leaves, on the other hand, strongly reflects near-infrared light (from 0.7 to 1.1 µm). The more leaves a plant has, the more these wavelengths of light are affected, respectively. [[1]](https://earthobservatory.nasa.gov/Features/MeasuringVegetation/measuring_vegetation_2.php)
+
+A well-established method of measuring vegetation density has arisen from this facet of nature called the Normalized Vegetation Density Index (NDVI).
+NDVI normalizes the infrared response of regions on the earth to their response in the visible range.
+This effectively transforms the imaged region to show areas where visible light is strongly absorbed and infrared light is strongly reflected.
+
+```
+Let
+    NIR = near-infrared wavelength response (0.7-1.1 micron)
+    VIS = visible wavelength response (0.4-0.7 micron)
+
+Such that
+    NDVI = (NIR - VIS)/(NIR + VIS)
+```
+
+NDVI is effective in rejecting man-made structures, water, and land features since these types of regions rarely strongly absorb visible AND strongly reflect infrared (usually its one or the other, not both).
+
+![Multispectral raspberry pi: first light (NDVI images)](https://publiclab.org/system/images/photos/000/009/861/original/Screen_Shot_2015-05-10_at_17.30.58.png)
+> Public Lab demonstrates how applying a clever colormap to NDVI data makes identifying vegetation very clear against the background. [[2]](https://publiclab.org/notes/khufkens/05-10-2015/multispectral-raspberry-pi-first-light-ndvi-images)
+
+- [1] https://earthobservatory.nasa.gov/Features/MeasuringVegetation/measuring_vegetation_2.php
+- [2]  https://publiclab.org/notes/khufkens/05-10-2015/multispectral-raspberry-pi-first-light-ndvi-images
