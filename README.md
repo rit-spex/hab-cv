@@ -4,7 +4,6 @@ Where U At Plants? (WUAP) is a high-altitude balloon payload used to gather aeri
 This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems.
 Overarching goals and long-term visions for future work is outlined in the following Project Definition Document:  https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
 
-![WUAP Mission Patch](readme_assets/wuap.jpg)
 ![Example of HSL vegetation masking with HAB2 flight images](readme_assets/hsl_test2.gif)
 
 ## What does it do?
@@ -128,4 +127,6 @@ NDVI is effective in rejecting man-made structures, water, and land features sin
 > Public Lab demonstrates how applying a clever colormap to NDVI data makes identifying vegetation very clear against the background. [[2]](https://publiclab.org/notes/khufkens/05-10-2015/multispectral-raspberry-pi-first-light-ndvi-images)
 
 - [1] https://earthobservatory.nasa.gov/Features/MeasuringVegetation/measuring_vegetation_2.php
-- [2]  https://publiclab.org/notes/khufkens/05-10-2015/multispectral-raspberry-pi-first-light-ndvi-images
+- [2] https://publiclab.org/notes/khufkens/05-10-2015/multispectral-raspberry-pi-first-light-ndvi-images
+
+![WUAP Mission Patch](readme_assets/wuap.jpg)
