@@ -102,7 +102,7 @@ Not all plants are green, and not all green areas are vegetation. Despite this, 
 ![Example of HSL vegetation masking with Google Maps](readme_assets/hsl_test.gif)
 
 ## Normalized Vegetation Density Index (NDVI
-_(This is an algorithm which will be used on future flights.)_
+_This is an algorithm which will be used on future flights._
 
 A more precise method of measuring vegetation density is through spectroscopy.
 To the naked eye, we see the reflected wavelengths of green that chlorophyll in vegetation reflects.
