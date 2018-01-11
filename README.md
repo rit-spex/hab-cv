@@ -2,7 +2,9 @@
 Where U At Plants? (WUAP) is a high-altitude balloon payload used to gather aerial image data for future vegetation density analysis. WUAP uses on-board image processing with a Raspberry Pi 3, Python 3 and OpenCV 3.3 to mask RGB images of the Earth and attempts to mask areas of high vegetation using colorspace transformations.
 
 This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems.
-Overarching goals and long-term visions for future work is outlined in the following Project Definition Document:  https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
+
+**Overarching goals and long-term visions for future work is outlined in the following Project Definition Document**:
+https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
 
 ![Example of HSL vegetation masking with HAB2 flight images](readme_assets/hsl_test2.gif)
 
