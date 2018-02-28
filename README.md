@@ -2,9 +2,10 @@
 Where U At Plants? (WUAP) is a high-altitude balloon payload used to gather aerial image data for future vegetation density analysis. WUAP uses on-board image processing with a Raspberry Pi 3, Python 3 and OpenCV 3.3 to mask RGB images of the Earth and attempts to mask areas of high vegetation using colorspace transformations.
 
 This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems.
-Overarching goals and long-term visions for future work is outlined in the following Project Definition Document:  https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
 
-![WUAP Mission Patch](readme_assets/wuap.jpg)
+**Overarching goals and long-term visions for future work is outlined in the following Project Definition Document**:
+https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
+
 ![Example of HSL vegetation masking with HAB2 flight images](readme_assets/hsl_test2.gif)
 
 ## What does it do?
@@ -101,7 +102,7 @@ Not all plants are green, and not all green areas are vegetation. Despite this, 
 ![Example of HSL vegetation masking with Google Maps](readme_assets/hsl_test.gif)
 
 ## Normalized Vegetation Density Index (NDVI
-_(This is an algorithm which will be used on future flights.)_
+_This is an algorithm which will be used on future flights._
 
 A more precise method of measuring vegetation density is through spectroscopy.
 To the naked eye, we see the reflected wavelengths of green that chlorophyll in vegetation reflects.
@@ -128,4 +129,6 @@ NDVI is effective in rejecting man-made structures, water, and land features sin
 > Public Lab demonstrates how applying a clever colormap to NDVI data makes identifying vegetation very clear against the background. [[2]](https://publiclab.org/notes/khufkens/05-10-2015/multispectral-raspberry-pi-first-light-ndvi-images)
 
 - [1] https://earthobservatory.nasa.gov/Features/MeasuringVegetation/measuring_vegetation_2.php
-- [2]  https://publiclab.org/notes/khufkens/05-10-2015/multispectral-raspberry-pi-first-light-ndvi-images
+- [2] https://publiclab.org/notes/khufkens/05-10-2015/multispectral-raspberry-pi-first-light-ndvi-images
+
+![WUAP Mission Patch](readme_assets/wuap.jpg)
