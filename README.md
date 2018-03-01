@@ -15,7 +15,7 @@ This script starts a video stream, samples "raw" video frames and saves them wit
 This project is driven by the objective to estimate vegetation density from imagery captured from a high altitude balloon.
 The code and methods here describe only a portion of the development required for any sort of high-fidelity or real-time vegetation density mapping, but make up the basis for future work.
 
-First and foremost, this project aims to _collect data_ in the form of as many images (visible and enar-infrared) of the Earth as possible.
+First and foremost, this project aims to _collect data_ in the form of as many images (visible and near-infrared) of the Earth as possible.
 More advanced analysis can be performed later on the ground, and more time can be spent developing and testing new algorithms for future flights.
 
 While on-board processing is a secondary objective, we aim to demonstrate its usefulness with simple image processing algorithms performed in-flight.
@@ -24,7 +24,7 @@ While on-board processing is a secondary objective, we aim to demonstrate its us
 On the main thread, values are initialized and 3 threads are opened to capture, process, and save image frames concurrently.
 Data is passed between threads using a queue.
 
-1. Using `PiVideoStream` from the `imutils` library, a threaded video stream is opened to continuously capture frames from the camera module at the specified image size and framerate (640 x 480 @ 60 fps).
+1. Using `PiVideoStream` from the [`imutils`](https://github.com/jrosebr1/imutils) library, a threaded video stream is opened to continuously capture frames from the camera module at the specified image size and framerate (640 x 480 @ 60 fps).
 
 2. A thread is opened to read and save frames from the video stream as fast as possible.
 Each iteration of the looped read process, the most recent frame of the continuous stream (Thread 1) is sampled and saved as a JPEG image.
