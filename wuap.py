@@ -25,10 +25,11 @@ import os # Manage files and directories
 class FrameReader():
     ''' Samples frames from a pi video stream and saves them to disk.
     '''
-    def __init__(self,stream,q):
+    def __init__(self,stream,q,debug=False):
         # super(FrameReader,self).__init__()
         self.stream = stream
         self.q = q
+        self.debug=debug
         self.stopped = True
 
     def run(self):
@@ -36,7 +37,8 @@ class FrameReader():
         while not self.stopped:
             frame=self.stream.read() # sample from stream
             framename=str(int(time.time()*10000000)) # name image based on time sampled
-            io.imsave('raw/'+framename+'.jpg',frame) # save to disk as jpg
+            if self.debug: framename='TEST_'+framename
+            io.imsave('raw/raw_'+framename+'.jpg',frame) # save to disk as jpg
             if not self.q.full():
                 self.q.put((frame,framename)) # send frame to mask processing queue 
             else: logging.debug('Queue is full ('+str(self.q.qsize())+'frames)')
@@ -56,10 +58,11 @@ class FrameReader():
 class FrameMasker(threading.Thread):
     ''' Masks frames from the queue and saves the mask to disk.
     '''
-    def __init__(self,stream,q):
+    def __init__(self,stream,q,debug=False):
         # super(FrameMasker,self).__init__()
         self.stream=stream
         self.q=q
+        self.debug=debug
         self.stopped = True
 
     def run(self):
@@ -68,8 +71,8 @@ class FrameMasker(threading.Thread):
             if not self.q.empty():
                 (frame, framename) = self.q.get() # retrieve frame from queue (First In Last Out)
                 # frame = resize(frame, width=256)
-                mask = get_hsv_mask(frame) # get hsv logical mask
-                io.imsave('mask/'+framename+'.jpg',mask) # save image to disk
+                mask = get_hsv_mask(frame,self.debug) # get hsv logical mask
+                io.imsave('mask/mask_'+framename+'.jpg',mask) # save image to disk
             # else: logging.debug('Queue is empty!')
 
     def start(self):
@@ -86,6 +89,16 @@ class FrameMasker(threading.Thread):
                 self.t.join()
                 logging.debug('stopped FrameMasker')
                 break
+def hsv2decimal(hsv):
+    ''' Convert integer values to decimal percentages
+        Hue [0 255]
+        Saturation [0 100]
+        Value [0 100]
+    '''
+    h=hsv[0]/255.0
+    s=hsv[1]/100.0
+    v=hsv[2]/100.0
+    return [h,s,v]
 
 def hsv_mask(img, limits):
     ''' Generate binary logical mask to filter RGB image to a range of HSV values (inclusive)
@@ -94,21 +107,25 @@ def hsv_mask(img, limits):
             limits  as  tuple of two [Hue, Saturation, Value] lists or arrays
     '''
     hsv = color.rgb2hsv(img) # transform RGB to HLS
-    lower_limit, upper_limit = limits[0], limits[1]
-    mask = np.zeros_like(hsv)
-    mask_lower = mask
-    mask_upper = mask
+    lower_limit, upper_limit = hsv2decimal(limits[0]), hsv2decimal(limits[1])
+    mask_3channel = np.zeros_like(hsv)
     for i in range(3):
-        mask_lower[:,:,i] = (hsv[:,:,i] >= lower_limit[i])
-        mask_upper[:,:,i] = (hsv[:,:,i] <= upper_limit[i])
-    mask = np.logical_and(mask_lower,mask_upper)
-    return mask
+        mask_3channel[:,:,i] = np.logical_and((hsv[:,:,i] >= lower_limit[i]),(hsv[:,:,i] <= upper_limit[i]))
+    # mask = np.logical_and(np.logical_and(mask_3channel[:,:,0], mask_3channel[:,:,1]),mask_3channel[:,:,2]) # collapse to 2d array
+    mask=mask_3channel
+    return mask, mask_3channel
 
-def get_hsv_mask(img):
-    ''' Generate a binary logical mask to filter by a Hue-Lightness-Saturation range.
+def get_hsv_mask(img,debug=False):
+    ''' Generate a binary logical mask to filter by a Hue-Saturation-Value range.
+        Hue [0 255]
+        Saturation [0 100]
+        Value [0 100]
     '''
-    color_range = ([35, 5, 35], [120, 140, 255])
-    mask = hsv_mask(img, color_range)
+    if debug:
+        color_range = ([0,35,35], [100,100,100])
+    else:
+        color_range = ([35, 50, 35], [120, 55, 100])
+    mask, mask_3channel = hsv_mask(img, color_range)
     return mask
 
 def stopAll(stream,reader,masker):
@@ -159,9 +176,9 @@ def init():
     try:
         # check FrameReader
         testq=queue.Queue()
-        testreader,testmasker = FrameReader(stream=teststream,q=testq), FrameMasker(stream=teststream,q=testq)
-        testreader.start()
+        testreader,testmasker = FrameReader(stream=teststream,q=testq,debug=True), FrameMasker(stream=teststream,q=testq,debug=True)
         logging.debug('  (spooling FrameReader...)')
+        testreader.start()
         time.sleep(1)
         testreader.stop()
     except:
@@ -173,8 +190,8 @@ def init():
 
     try:
         # check FrameMasker
-        testmasker.start()
         logging.debug('  (spooling FrameMasker...)')
+        testmasker.start()
         time.sleep(1)
         testmasker.stop()
     except:
@@ -190,6 +207,7 @@ if __name__ == '__main__':
     if not init():
         logging.debug('ABORTING STARTUP')
         exit()
+    logging.debug('starting flight operations:')
     q = queue.Queue()
     resolution=(640,480) # http://picamera.readthedocs.io/en/release-1.10/fov.html
     framerate=60
@@ -201,9 +219,14 @@ if __name__ == '__main__':
     reader,masker=FrameReader(stream=stream,q=q),FrameMasker(stream=stream,q=q)
     reader.start()
     masker.start()
-
+    logging.debug('Recording...')
     while(True):
         user_input = input('Stop the stream?: ')
-        if user_input:
+        try:
+            if user_input:
+                logging.debug('ABORTING')
+                stopAll(stream,reader,masker)
+                break
+        except:
+            logging.debug('ABORTING')
             stopAll(stream,reader,masker)
-            break
