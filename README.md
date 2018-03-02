@@ -50,6 +50,7 @@ If either of these conditions are reached, the script obviously is halted and do
 Raspberry Pi 3 Model B + Raspbian Stretch Lite (OS)
 Raspberry Pi Camera Module v2 (or Pi Camera NoIR v2)
 
+### Using OpenCV
 ```
 sudo apt-get update
 sudo apt-get install cmake build-essential pkg-config
@@ -71,10 +72,27 @@ mkdir mask
 ```
 For help installing OpenCV 3.3.x to a Raspberry Pi with Raspbian Stretch, consult [this great tutorial from PyImageSearch.com](https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/).
 
+### Using scikit-image
+[`scikit-image`](http://scikit-image.org/) is a Python module with many handy image processing tools built upon NumPy and SciPy.
+It is much easier to install on a Raspberry Pi, but is not as feature-complete as OpenCV.
+```
+sudo aptget update
+sudo apt-get install python3-dev python3-pip
+sudo pip3 install numpy scikit-image picamera
+```
+Since future flights are planned to use more advanced image processing and computer vision techniques, it is recommended to install OpenCV instead of scikit-image.
+However, the primary objective of WUAP is to obtain a large collection of images for future CV experiments, so it may be more reliable to install scikit-image for this payload only.
+
 ## Running the Script
+With OpenCV
 ```
-python3 hab_cv.py
+python3 wuap.py
 ```
+With scikit-image
+```
+python3 wuap_skimage.py
+```
+
 Each raw video frame is saved in the `raw` folder.
 Each corresponding mask is saved in the `mask` folder.
 
@@ -101,7 +119,14 @@ Not all plants are green, and not all green areas are vegetation. Despite this, 
 
 ![Example of HSL vegetation masking with Google Maps](readme_assets/hsl_test.gif)
 
-## Normalized Vegetation Density Index (NDVI
+An alternative to the HSL colorspace is Hue-Saturation-Value (HSV). 
+HSV is similar to HSL in dividing the spectrum, but with less distict separation of black and white in the colorspace.
+The [Wikipedia article on HSL and HSV](https://en.wikipedia.org/wiki/HSL_and_HSV) provides great insight into the construction of the two colorspaces and their distinctions.
+
+HSV is used in the same way as HSL, the difference being the values of the color filter.
+The primary benefit to using HSV over HSL is that many tools, such as scikit-image, have readily available RGB-to-HSV colorspace transformations, but not many have RGB-to-HSL transformations.
+
+## Normalized Vegetation Density Index (NDVI)
 _This is an algorithm which will be used on future flights._
 
 A more precise method of measuring vegetation density is through spectroscopy.
