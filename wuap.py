@@ -44,12 +44,13 @@ class FrameReader():
 
     def start(self):
         self.stopped = False
-        t = threading.Thread(target=self.run, args=(), name='reader')
-        t.daemon = True
-        t.start()
+        self.t = threading.Thread(target=self.run, args=(), name='reader')
+        self.t.daemon = True
+        self.t.start()
 
     def stop(self):
         self.stopped = True
+        self.t.join()
         logging.debug('stopped FrameReader')
 
 class FrameMasker(threading.Thread):
@@ -67,21 +68,22 @@ class FrameMasker(threading.Thread):
             if not self.q.empty():
                 (frame, framename) = self.q.get() # retrieve frame from queue (First In Last Out)
                 # frame = resize(frame, width=256)
-                mask = get_hsl_mask(frame) # get hsl logical mask
+                mask = get_hsv_mask(frame) # get hsv logical mask
                 io.imsave('mask/'+framename+'.jpg',mask) # save image to disk
             # else: logging.debug('Queue is empty!')
 
     def start(self):
         self.stopped = False
-        t = threading.Thread(target=self.run, args=(), name='masker')
-        t.daemon = True
-        t.start()
+        self.t = threading.Thread(target=self.run, args=(), name='masker')
+        self.t.daemon = True
+        self.t.start()
 
     def stop(self):
         logging.debug('masking remaining frames...')
         while(True):
             if self.q.empty():
                 self.stopped = True
+                self.t.join()
                 logging.debug('stopped FrameMasker')
                 break
 
@@ -91,13 +93,15 @@ def hsv_mask(img, limits):
             img     as  PIL image object
             limits  as  tuple of two [Hue, Saturation, Value] lists or arrays
     '''
-    r,g,b = img[:,:,0],img[:,:,1],img[:,:,2]
-    h,s,v = color.rgb2hsv(r,g,b) # transform RGB to HLS
+    hsv = color.rgb2hsv(img) # transform RGB to HLS
     lower_limit, upper_limit = limits[0], limits[1]
-    hsv = np.dstack([h,s,l])
     mask = np.zeros_like(hsv)
+    mask_lower = mask
+    mask_upper = mask
     for i in range(3):
-        mask[:,:,i] = hsv[:,:,i] >= lower_limit[i] and hsv[:,:,i] <= upper_limit[i]
+        mask_lower[:,:,i] = (hsv[:,:,i] >= lower_limit[i])
+        mask_upper[:,:,i] = (hsv[:,:,i] <= upper_limit[i])
+    mask = np.logical_and(mask_lower,mask_upper)
     return mask
 
 def get_hsv_mask(img):
@@ -174,8 +178,8 @@ def init():
         time.sleep(1)
         testmasker.stop()
     except:
-        testmasker.stop()
         logging.debug('[NO GO] FrameMasker')
+        testmasker.stop()
         return False
     logging.debug('[GO] FrameMasker')
 
