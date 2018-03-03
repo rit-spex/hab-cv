@@ -8,13 +8,11 @@
                           - Filter by "greenish" hues if using a standard PiCamera
                           - Filter by a threshold grayscale response if using a PiCamera NOIR
  Dependencies:
-     Python 3
-     PiCamera
-     NumPy
-     OpenCV 3.3
+     sudo apt-get install python3 python3-pip
+     sudo pip3 install numpy scikit-image picamera
 '''
 import numpy as np # Linear algebra and matrix operations
-import cv2 # OpenCV image processing
+from skimage import io, color # Image processing tools
 from picamera import PiCamera # Interface with PiCamera module
 from picamera.array import PiRGBArray # Handle PiCamera image frames as RGB m-by-n-by-3 arrays
 from pivideostream import PiVideoStream # Open camera video stream on separate thread
@@ -40,9 +38,9 @@ class FrameReader():
             frame=self.stream.read() # sample from stream
             framename=str(int(time.time()*10000000)) # name image based on time sampled
             if self.debug: framename='TEST_'+framename
-            cv2.imwrite('raw/'+framename+'.jpg',frame) # save to disk as jpg
+            io.imsave('raw/raw_'+framename+'.jpg',frame) # save to disk as jpg
             if not self.q.full():
-                self.q.put((frame,framename)) # send frame to mask processing queue
+                self.q.put((frame,framename)) # send frame to mask processing queue 
             else: logging.debug('Queue is full ('+str(self.q.qsize())+'frames)')
         return
 
@@ -73,8 +71,8 @@ class FrameMasker(threading.Thread):
             if not self.q.empty():
                 (frame, framename) = self.q.get() # retrieve frame from queue (First In Last Out)
                 # frame = resize(frame, width=256)
-                mask = get_hls_mask(frame,self.debug) # get hls logical mask
-                cv2.imwrite('mask/'+framename+'.jpg',mask) # save image to disk
+                mask = get_hsv_mask(frame,self.debug) # get hsv logical mask
+                io.imsave('mask/mask_'+framename+'.jpg',mask) # save image to disk
             # else: logging.debug('Queue is empty!')
 
     def start(self):
@@ -91,29 +89,43 @@ class FrameMasker(threading.Thread):
                 self.t.join()
                 logging.debug('stopped FrameMasker')
                 break
+def hsv2decimal(hsv):
+    ''' Convert integer values to decimal percentages
+        Hue [0 255]
+        Saturation [0 100]
+        Value [0 100]
+    '''
+    h=hsv[0]/255.0
+    s=hsv[1]/100.0
+    v=hsv[2]/100.0
+    return [h,s,v]
 
-def hls_mask(img, limits):
-    ''' Generate binary logical mask to filter RGB image to a range of HSL values (inclusive)
+def hsv_mask(img, limits):
+    ''' Generate binary logical mask to filter RGB image to a range of HSV values (inclusive)
           inputs:
             img     as  PIL image object
-            limits  as  tuple of two [Hue, Lightness, Saturation] lists or arrays
+            limits  as  tuple of two [Hue, Saturation, Value] lists or arrays
     '''
-    hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS_FULL)
-    lower_limit, upper_limit = np.array(limits[0], dtype='uint8'), np.array(limits[1], dtype='uint8')
-    mask = cv2.inRange(hls, lower_limit, upper_limit)
-    return mask
+    hsv = color.rgb2hsv(img) # transform RGB to HLS
+    lower_limit, upper_limit = hsv2decimal(limits[0]), hsv2decimal(limits[1])
+    mask_3channel = np.zeros_like(hsv)
+    for i in range(3):
+        mask_3channel[:,:,i] = np.logical_and((hsv[:,:,i] >= lower_limit[i]),(hsv[:,:,i] <= upper_limit[i]))
+    # mask = np.logical_and(np.logical_and(mask_3channel[:,:,0], mask_3channel[:,:,1]),mask_3channel[:,:,2]) # collapse to 2d array
+    mask=mask_3channel
+    return mask, mask_3channel
 
-def get_hls_mask(img,debug=False):
+def get_hsv_mask(img,debug=False):
     ''' Generate a binary logical mask to filter by a Hue-Saturation-Value range.
         Hue [0 255]
-        Saturation [0 255]
-        Value [0 255]
+        Saturation [0 100]
+        Value [0 100]
     '''
     if debug:
         color_range = ([0,35,35], [100,100,100])
     else:
-        color_range = ([35, 5, 35], [120, 140, 255])
-    mask, mask_3channel = hls_mask(img, color_range)
+        color_range = ([35, 50, 35], [120, 55, 100])
+    mask, mask_3channel = hsv_mask(img, color_range)
     return mask
 
 def stopAll(stream,reader,masker):
