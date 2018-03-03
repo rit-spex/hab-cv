@@ -63,12 +63,8 @@ sudo apt-get install python-dev python3-dev python-numpy python-scipy
 sudo apt-get install libopencv-dev python-opencv
 sudo pip3 install "picamera[array]"
 
-sudo pip3 install imutils
-
 git clone https://github.com/RIT-Space-Exploration/hab-cv.git
 cd hab-cv
-mkdir raw
-mkdir mask
 ```
 For help installing OpenCV 3.3.x to a Raspberry Pi with Raspbian Stretch, consult [this great tutorial from PyImageSearch.com](https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/).
 
