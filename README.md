@@ -53,7 +53,7 @@ Raspberry Pi Camera Module v2 (or Pi Camera NoIR v2)
 ### Using OpenCV
 ```
 sudo apt-get update
-sudo apt-get install cmake build-essential pkg-config
+sudo apt-get install git cmake build-essential pkg-config
 sudo apt-get install libgtk2.0-dev libtbb-dev
 sudo apt-get install libjasper-dev libjpeg-dev libpng-dev libtiff-dev
 sudo apt-get install libavcodec-dev libavutil-dev libavformat-dev libswscale-dev
