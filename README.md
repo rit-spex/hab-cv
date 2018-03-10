@@ -47,24 +47,16 @@ If either of these conditions are reached, the script obviously is halted and do
 # Using the Code
 
 ## Requirements & Dependencies
-Raspberry Pi 3 Model B + Raspbian Stretch Lite (OS)
+Raspberry Pi 3 Model B + Raspbian Stretch Lite (OS),
 Raspberry Pi Camera Module v2 (or Pi Camera NoIR v2)
+```
+git clone hab-cv
+cd hab-cv
+```
 
 ### Using OpenCV
 ```
-sudo apt-get update
-sudo apt-get install git cmake build-essential pkg-config
-sudo apt-get install libgtk2.0-dev libtbb-dev
-sudo apt-get install libjasper-dev libjpeg-dev libpng-dev libtiff-dev
-sudo apt-get install libavcodec-dev libavutil-dev libavformat-dev libswscale-dev
-sudo apt-get install libdc1394-22-dev libv4l-dev
-
-sudo apt-get install python-dev python3-dev python-numpy python-scipy
-sudo apt-get install libopencv-dev python-opencv
-sudo pip3 install "picamera[array]"
-
-git clone https://github.com/RIT-Space-Exploration/hab-cv.git
-cd hab-cv
+installer.sh
 ```
 For help installing OpenCV 3.3.x to a Raspberry Pi with Raspbian Stretch, consult [this great tutorial from PyImageSearch.com](https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/).
 
@@ -72,9 +64,7 @@ For help installing OpenCV 3.3.x to a Raspberry Pi with Raspbian Stretch, consul
 [`scikit-image`](http://scikit-image.org/) is a Python module with many handy image processing tools built upon NumPy and SciPy.
 It is much easier to install on a Raspberry Pi, but is not as feature-complete as OpenCV.
 ```
-sudo aptget update
-sudo apt-get install python3-dev python3-pip
-sudo pip3 install numpy scikit-image picamera
+installer_skimage.sh
 ```
 Since future flights are planned to use more advanced image processing and computer vision techniques, it is recommended to install OpenCV instead of scikit-image.
 However, the primary objective of WUAP is to obtain a large collection of images for future CV experiments, so it may be more reliable to install scikit-image for this payload only.
@@ -115,7 +105,7 @@ Not all plants are green, and not all green areas are vegetation. Despite this, 
 
 ![Example of HSL vegetation masking with Google Maps](readme_assets/hsl_test.gif)
 
-An alternative to the HSL colorspace is Hue-Saturation-Value (HSV). 
+An alternative to the HSL colorspace is Hue-Saturation-Value (HSV).
 HSV is similar to HSL in dividing the spectrum, but with less distict separation of black and white in the colorspace.
 The [Wikipedia article on HSL and HSV](https://en.wikipedia.org/wiki/HSL_and_HSV) provides great insight into the construction of the two colorspaces and their distinctions.
 
