@@ -73,6 +73,20 @@ sudo ./installer_sk.sh
 Since future flights are planned to use more advanced image processing and computer vision techniques, it is recommended to install OpenCV instead of scikit-image.
 However, the primary objective of WUAP is to obtain a large collection of images for future CV experiments, so it may be more reliable to install scikit-image for this payload only.
 
+### Infrared Mode
+The filters for the infrared camera can be tuned differently from the regular picamera.
+To start WUAP in "infrared mode," use the `-ir` option.
+```
+python3 wuap.py -ir
+```
+To boot into infrared mode, run the alternative shell script included in the installer directory.
+```
+sudo chmod +x bootintowuap-ir.sh
+sudo ./bootintowuap-ir.sh
+```
+
+The example code above is shown using OpenCV mode, but the same instructions can be applied to scikit-image mode.
+
 ## Running the Script
 With OpenCV
 ```
