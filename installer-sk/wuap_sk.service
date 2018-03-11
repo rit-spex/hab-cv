@@ -3,7 +3,7 @@ Description=Where U At Plants? - scikit-image mode
 After=
 
 [Service]
-ExecStart=/usr/bin/python3 -u wuap_skimage.py
+ExecStart=/usr/bin/python3 -u wuap_sk.py
 WorkingDirectory=/home/pi/hab-cv
 StandardOutput=inherit
 StandardError=inherit
