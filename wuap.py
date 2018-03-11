@@ -139,7 +139,7 @@ def get_hls_mask(img,irmode=False,testmode=False):
         color_range = ([0,0,0], [255,255,255])
     else:
         color_range = ([35, 5, 35], [120, 140, 255])
-    mask, mask_3channel = hls_mask(img, color_range)
+    mask = hls_mask(img, color_range)
     return mask
 
 def stopAll(stream,reader,masker):
