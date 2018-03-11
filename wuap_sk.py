@@ -87,7 +87,7 @@ class FrameMasker(threading.Thread):
             if not self.q.empty():
                 (frame, framename) = self.q.get() # retrieve frame from queue (First In Last Out)
                 # frame = resize(frame, width=256)
-                mask = get_hsv_mask(frame,self.irmode,self.testmode) # get hsv logical mask
+                mask = get_hsv_mask(frame,irmode=self.irmode,testmode=self.testmode) # get hsv logical mask
                 maskname = 'mask_'+framename
                 try:
                     io.imsave('mask/'+maskname+'.jpg',mask) # save image to disk

@@ -89,7 +89,7 @@ class FrameMasker(threading.Thread):
             if not self.q.empty():
                 (frame, framename) = self.q.get() # retrieve frame from queue (First In Last Out)
                 # frame = resize(frame, width=256)
-                mask = get_hls_mask(frame,self.debug) # get hls logical mask
+                mask = get_hls_mask(frame,irmode=self.irmode,testmode=self.testmode) # get hls logical mask
                 maskname = 'mask_'+framename
                 try:
                     cv2.imwrite('mask/'+maskname+'.jpg',mask) # save image to disk
