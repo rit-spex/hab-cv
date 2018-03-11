@@ -7,12 +7,17 @@ DEPENDENCIES="libgtk2.0-dev libtbb-dev libjasper-dev libjpeg-dev libpng-dev libt
 PYTHONPKGS="python-dev python3-dev libopencv-dev"
 PIPMODULES="numpy scipy picamera opencv-python"
 
+VENV="wuap"
+
 # Update firmware
 apt-get update
 apt-get upgrade -y
 
 # Install packages
 apt-get install $PYTHONPKGS -y
+pip3 install virtualenv
+mkvirtualenv $VENV
+workon $VENV
 pip3 install $PIPMODULES
 
 # clean installation
