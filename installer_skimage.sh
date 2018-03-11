@@ -13,3 +13,6 @@ apt-get upgrade -y
 # Install packages
 apt-get install $PACKAGES $DEPENENCIES -y
 pip3 install $PIPMODULES
+
+# clean installation
+apt autoremove
