@@ -51,13 +51,13 @@ If either of these conditions are reached, the script obviously is halted and do
 ## Requirements & Dependencies
 Raspberry Pi 3 Model B + Raspbian Stretch Lite (OS),
 Raspberry Pi Camera Module v2 (or Pi Camera NoIR v2)
-```
+```shell
 git clone hab-cv
 cd hab-cv
 ```
 
 ### Using OpenCV
-```
+```shell
 cd installer
 sudo chmod +x installer.sh bootintowuap.sh
 sudo ./installer.sh
@@ -67,7 +67,7 @@ For help installing OpenCV 3.3.x to a Raspberry Pi with Raspbian Stretch, consul
 ### Using scikit-image
 [`scikit-image`](http://scikit-image.org/) is a Python module with many handy image processing tools built upon NumPy and SciPy.
 It is much easier to install on a Raspberry Pi, but is not as feature-complete as OpenCV.
-```
+```shell
 cd installer-sk
 sudo chmod +x installer_sk.sh bootintowuap_sk.sh
 sudo ./installer_sk.sh
@@ -76,27 +76,15 @@ Since future flights are planned to use more advanced image processing and compu
 However, the primary objective of WUAP is to obtain a large collection of images for future CV experiments, so it may be more reliable to install scikit-image for this payload only.
 Future development will only support OpenCV.
 
-### Infrared Mode
-The filters for the infrared camera can be tuned differently from the regular picamera.
-To start WUAP in "infrared mode," use the `-ir` option.
-```
-python3 wuap.py -ir
-```
-To boot into infrared mode, run the alternative shell script included in the installer directory.
-```
-sudo chmod +x bootintowuap-ir.sh
-sudo ./bootintowuap-ir.sh
-```
 
-The example code above is shown using OpenCV mode, but the same instructions can be applied to scikit-image mode.
 
 ## Running the Script
 With OpenCV
-```
+```shell
 python3 wuap.py
 ```
 With scikit-image
-```
+```shell
 python3 wuap_sk.py
 ```
 
@@ -105,6 +93,34 @@ Each corresponding mask is saved in the `mask` folder.
 
 Press any key then Enter to close the video stream and stop all processes.
 The masking process will mask the remaining frames in the queue before closing.
+
+## Starting WUAP at bootup
+A shell script is included in this repository to enable `wuap.py` to be executed at boot (as a service). 
+Running WUAP at boot **will not** output information to the terminal while it is running, and will not block other operations.
+
+```shell
+sudo chmod +x bootintowuap.sh
+sudo ./bootintowuap.sh
+```
+The example code above is shown using OpenCV mode, but the same instructions can be applied to scikit-image mode.
+
+Stop the WUAP service with the following command:
+```shell
+sudo systemctl stop wuap.service
+```
+
+## Infrared Mode
+The filters for the infrared camera can be tuned differently from the regular picamera.
+To start WUAP in "infrared mode," use the `-ir` option.
+```shell
+python3 wuap.py -ir
+```
+To boot into infrared mode, run the alternative shell script included in the installer directory.
+```shell
+sudo chmod +x bootintowuap-ir.sh
+sudo ./bootintowuap-ir.sh
+```
+The example code above is shown using OpenCV mode, but the same instructions can be applied to scikit-image mode.
 
 # Basis for Experiment
 Vegetation is identified two ways: Identification by color from visible-light images, and using the Normalized Vegetation Density Index from vilisble-light and near-infrared images.
