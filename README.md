@@ -61,6 +61,7 @@ cd hab-cv
 cd installer
 sudo chmod +x installer.sh bootintowuap.sh
 sudo ./installer.sh
+sudo reboot
 ```
 For help installing OpenCV 3.3.x to a Raspberry Pi with Raspbian Stretch, consult [this great tutorial from PyImageSearch.com](https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/).
 
@@ -71,6 +72,7 @@ It is much easier to install on a Raspberry Pi, but is not as feature-complete a
 cd installer-sk
 sudo chmod +x installer_sk.sh bootintowuap_sk.sh
 sudo ./installer_sk.sh
+sudo reboot
 ```
 Since future flights are planned to use more advanced image processing and computer vision techniques, it is **recommended to install OpenCV instead of scikit-image**.
 However, the primary objective of WUAP is to obtain a large collection of images for future CV experiments, so it may be more reliable to install scikit-image for this payload only.
