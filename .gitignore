@@ -110,4 +110,4 @@ ENV/
 .vscode/*
 
 # DATA FILES
-hab4_data/*
+**/hab4_data/
