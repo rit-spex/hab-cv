@@ -27,6 +27,8 @@ NDVI is a method where the visible reflectance from plants (0.4-0.7 micron) and 
 By collecting near-infrared light for the same scene as the visible light images, the effectiveness on-board processing mask can be assessed and a confident baseline can be established.
 
 ## Payload Hardware
+The WUAP experiment uses a pair of Raspberry Pi 3 B+ single-board-computers (SBC) for commanding the camera modules, saving images, and on-board image processing.
+Each SBC interfaces with a Raspberry Pi Camera Module V2. 
 
 A contributing factor in the decision to use almost entirely commercial off-the-shelf (COTS) components is not only their cost, but also their simplicity to use and enormous amount of freely available documentation.
 The WUAP payload concept and software was developed completely remotely from RIT Space Exploration Mission Control, where the payload components were assembled and integrated.
