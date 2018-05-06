@@ -28,23 +28,72 @@ By collecting near-infrared light for the same scene as the visible light images
 
 ## Payload Hardware
 The WUAP experiment uses a pair of Raspberry Pi 3 B+ single-board-computers (SBC) for commanding the camera modules, saving images, and on-board image processing.
+The SBCs are powered by a lithium polymer battery.
 Each SBC interfaces with a Raspberry Pi Camera Module V2. 
+The SBCs and camera modules are housed in an ABS enclosure mounted to the Earth-facing side of the HAB.
 
+{annotated view of HAB and WUAP module}
+
+Pi Camera Modules are [Sony IMX219PQ](https://www.sony-semicon.co.jp/products_en/new_pro/april_2014/imx219_e.html) visible RGB detectors with small lenses. 
+While the detector is sensitive to light into the near-infrared, the standard camera module has an infrared filter installed to restrict the spectral response to approximately 400-700 nm.
+To detect near-infrared light, Raspberry Pi Camera NoIR Module is available, which is an identical sensor and optics sans filter. 
+The red channel of the NoIR module is sensitive to approximately 1200 nm.
+
+[{table of camera specifications}](https://elinux.org/Rpi_Camera_Module#Technical_Parameters_.28v.2_board.29)
+
+### Integration Issues
 A contributing factor in the decision to use almost entirely commercial off-the-shelf (COTS) components is not only their cost, but also their simplicity to use and enormous amount of freely available documentation.
 The WUAP payload concept and software was developed completely remotely from RIT Space Exploration Mission Control, where the payload components were assembled and integrated.
 While COTS components made it easy to test the payload remotely by buying the same products, the physical separation between payload and HAB integration teams posed new challenges, and is partly responsible for some of the issues encountered during integration.
 
+The NDVI objective was aborted during integration when two days before flight it was discovered that the NoIR camera module purchased by the team included a different lens configuration than the standard Pi Camera V2 and Pi Camera NoIR modules. 
+This was a procurement (and communication) error, and it was decided by the HAB launch team to install a second visible (filtered) Pi Camera V2 module rather than a NoIR module since ordering a replacement part would delay the launch. 
+For this reason, no data was collected in the near-infrared spectrum for any imagery during the HAB4 flight.
 
-- raspberry pi
-- cameras (vis only!)
-- enclosure
 
 ## Payload Software
+Python 3 was used to capture, save, and process images during flight. 
+Python is easy to implement and easy to read, making development and debugging fast.
+Execution of Python code for image processing is not as fast as a C++ implementation might be, but the team decided to trade development efficiency for execution efficiency.
+Future iterations of flight software for computer vision and imaging payloads might use Python or C++, subject to another similar trade since almost all third party libraries used for WUAP are also available in C++.
+
+Interfacing with the camera modules was handled by the open source [PiCamera](http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes) library. 
+[OpenCV 3.3.1]() was used to handle and process images.
+An implementation of WUAP was written in [scikit-image]() due to its easier installation process, but only the OpenCV version of WUAP code was used during flight.
+OpenCV was chosen because of its straightforward image processing tools and because future computer vision processes could make use of OpenCV's extensive toolset.
+
+The WUAP Python script runs as a service upon startup of the SBCs so the software starts on launch day without user input.
+First the script runs a system checkout, cycling through the entire processing loop step by step to check for software, hardware, or interfacing issues that might prevent the code from operating properly. 
+This sequence takes approximately 10 seconds and upon completion, all processes are restarted in open loop mode where the script runs continuously until receiving user input or the battery runs out of power.
+
+Camera commanding, capture and image file saving, and masking perations are delegated to three separate threads so that they can run asynchronously at the maximum rate without blocking each other.
+The camera module is commanded in the `PiVideoStream` thread to run in continuous mode at 640 x 480 resolution and 60 frames per second.
+The image saving operation was executed on a new `FrameReader` thread, which samples `PiVideoStream` at an unlocked framerate which is only limited by the speed at which the SBC can save image arrays to disk as `.jpg` files.
+
+![Flowchart](figures/wuap_uml.png)
+
+multiple threads
+- rationale
+- pivideostream
+- framegrabber
+- framemasker
+
+startup
+- execution at startup via service
+- limitations and flaws -> two cameras might be asynchronous
+
 - software architecture
 - masking algorithm
 
 ## Pre-Flight Testing
-n/a lol
+hab1 data
+google images
+
+"twin" hardware setup
+
+note missing tests hat would have been nice
+- imaging system calibrations
+- baseline/benchmark of performance 
 
 ## Flight Profile
 
@@ -54,8 +103,20 @@ summary of notes in notebook
 ### What went right
 
 ### What went wrong
+- video stream super low framerate (should be fine at 60fps http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes)
+  - not temp dependent since occurred at sea level
+  - not observed in remote testing in california (maybe 15fps?)
+
+- mask is very poor
+  - trees werent green!
+  - more tuning needed
 
 ### What could have been done
+- testing & baseline
+- nir imagery
+- communication/syncing between pis
+- both image streams on one pi, processing on another pi
+- raw images to own queue
 
 ## Future Work
 
