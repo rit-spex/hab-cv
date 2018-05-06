@@ -146,9 +146,31 @@ No characterizations of image quality, optical distortions, sensor noise or sens
 
 Some of the main reasons for the significant lack of testing were limitations of time and resources.
 WUAP was developed and integrated by RIT Space Exploration student and alumni members in their free time and across the country.
-No laboratories or testing equipment was available to the development team.
+No laboratory or testing equipment was available to the development team.
 
 ## Flight Profile
+Where U At Plants (WUAP) flew as a payload on RIT Space Exploration's high altitude balloon [HAB4 mission](http://spex.rit.edu/rit-spex-launches-hab-4/) on April 22, 2018. 
+HAB4 launched from RIT at 10:24am EST and landed 2 hours 5 minutes later outside Hector, NY.
+Image data was retrieved from the Raspberry Pi SD memory cards after recovery.
+
+| | Camera 1 | Camera 2 |
+| --- | --- | --- |
+| BGR images saved | 12,026 | 31,751 |
+| Logical masks saved | 18,297 | 31,745 |
+
+Additional flight data was recorded by HAB4's primary avionics board using a [BME280](https://www.embeddedadventures.com/datasheets/BME280.pdf) sensor.
+
+| | |
+| --- | --- |
+| Average ascent rate | 907 feet/min |
+| Maximum altitude | 81,916 feet |
+| Balloon burst | 89.4 minutes after launch |
+| Average descent rate | 2,242 feet/min |
+| Balloon lande | 36.4 minutes after burst (125.8 minutes after launch) |
+| Minimum temperature | -27.66 C |
+| Maximum temperature | 18.48 C |
+| Minimum relative humidity | 2.91% |
+| Maximum relative humidity | 70.60% |
 
 ## Post-Flight Analysis
 summary of notes in notebook
