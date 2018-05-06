@@ -3,7 +3,7 @@ Where U At Plants (WUAP) flew as a payload on RIT Space Exploration's high altit
 HAB4 launched from RIT at 10:24am EST and landed 2 hours 5 minutes later outside Hector, NY.
 
 ## Mission summary
-WUAP saved 12,026 BGR images of the ground and generated ##,### binary HSL color masks during flight. Raw images and masks can be downloaded from [RIT SPEX's Google Drive]().
+WUAP saved more than 100,000 images of ground cover and HSL color masks during flight. Raw images and masks can be downloaded from [RIT SPEX's Google Drive]().
 
 **[BME280](https://www.embeddedadventures.com/datasheets/BME280.pdf) data recovered from main avionics board ([data source](https://github.com/RIT-Space-Exploration/Hab4/tree/master/Data/Main%20Board)):**
 * Average ascent rate: 907 feet/min
