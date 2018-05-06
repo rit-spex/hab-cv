@@ -1,4 +1,4 @@
-# Where U At Plants (WUAP) Summary and Post-Flight Report
+# Where U At Plants (WUAP) Technical Report
 Philip Linden
 
 May 2, 2018
@@ -129,22 +129,24 @@ While the software may take a similar amount of time to startup and the WUAP scr
 Linking image capture timing, or at least having a consistent timing baseline, becomes critical when comparing imagery from the two boards at a given time, since the motion of the entire HAB vehicle may change at significant rates.
 
 ## Pre-Flight Testing
-hab1 data
-google images
+All testing and development of WUAP software was conducted on a "twin" setup remotely in Santa Clara, California.
+WUAP's "twin" consisted of a Raspberry Pi 3 B+ and Pi Camera V2 Modules just like the components used in flight hardware.
 
 Tuning the color range of the mask is critical for producing accurate results.
 During development, the color range was tuned using images from previous HAB flights (HAB1) and Google Earth images.
+In both cases, the color mask operation was executed outside of WUAP's main codebase and operated on video screen captures on a desktop PC running Windows 10.
+HAB1 took flight on October 25th, 2015 during overcast and rainy weather, and Google Earth data is a composite from many different days and conditions. 
+Neither of these were representative of the clear, April day of HAB4's flight.
+No additional tuning to the color range was conducted prior to the HAB4 flight.
 
-no tuning before flight
-brown plants
+Despite plans to do so, no benchmarking or performance baselines were established prior to the HAB4 flight.
+The performance impact of image processing during frame captures is unknown.
+The impact of different temperature, pressure, and humidity conditions on performance are unknown.
+No characterizations of image quality, optical distortions, sensor noise or sensor responsivity were obtained prior to flight.
 
-impact of masker running in parallel to reader and stream??
-
-"twin" hardware setup
-
-note missing tests hat would have been nice
-- imaging system calibrations
-- baseline/benchmark of performance 
+Some of the main reasons for the significant lack of testing were limitations of time and resources.
+WUAP was developed and integrated by RIT Space Exploration student and alumni members in their free time and across the country.
+No laboratories or testing equipment was available to the development team.
 
 ## Flight Profile
 
