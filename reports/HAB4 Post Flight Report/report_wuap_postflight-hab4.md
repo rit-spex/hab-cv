@@ -78,7 +78,7 @@ This sequence takes approximately 10 seconds and upon completion, all processes 
 ### PiVideoStream
 Camera commanding, capture and image file saving, and masking perations are delegated to three separate threads so that they can run asynchronously at the maximum rate without blocking each other.
 The camera module is commanded in the `PiVideoStream` thread to run in continuous mode at 640 x 480 resolution and 60 frames per second.
-This resolution was chosen because it is the largest image resolution for which the `picamera` Python library can drive the sensor at or above 60Hz.[ref](http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes)
+This resolution was chosen because it is the largest image resolution for which the `picamera` Python library can drive the sensor at or above 60Hz.[<ref>](http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes)
 This mode captures images from the full field-of-view (FoV) of the 2592 x 1944 pixel sensor, using 4x4 pixel [binning](http://www.andor.com/learning-academy/ccd-binning-what-does-binning-mean) to achieve the final resolution of 640 x 480.
 Images are read from the sensor in RGB format but OpenCV operates under the BGR regime, so color channels are mapped appropriately.
 The video stream operation was executed on a separate thread to ensure the framerate is locked at 60Hz.
@@ -86,7 +86,8 @@ The video stream operation was executed on a separate thread to ensure the frame
 ### FrameReader
 The image saving operation was executed on a new `FrameReader` thread, which samples `PiVideoStream` at an unlocked framerate which is only limited by the speed at which the SBC can save image arrays to disk as `.jpg` files.
 The sampled image is the last frame captured by the video stream thread.
-Images are named based on the time at which they are saved.
+Images are named based on the time at which they are saved using Python `time.time()`, which returns the time in seconds since the epoch (UTC) to nanosecond precision.
+The method `time.time()` depends on the accuracy of the system clock, in this case only non-decreasing, unique values are desired.
 After saving, the image data is placed in a queue for processing.
 The saving operation was executed on a separate thread so that it did not block the video stream operations in case saving to disk took too much time and would delay subsequent frames.
 
@@ -96,14 +97,48 @@ If it samples slower than 60Hz, some intermediate frames captured by the video s
 The consequences of this design choice are discussed in a later section.
 
 ### FrameMasker
+The on-board image processing objective is satisfied by doing basic operations on saved images during flight.
+Primitive vegetation identification is implemented by creating a logical mask where pixels in a specified value range are registered as `true` while all other pixels are registered as `false`.
+The acceptable color range for vegetation (e.g. colors similar to browns and greens) is most easily defined using the Hue-Saturation-Lightness (HSL) colorspace as opposed to RGB.
+Once again, OpenCV defines the common order for color channels and implements HLS (hue-lightness-saturation).
+The BGR image is transposed to HLS colorspace using OpenCV `cvtColor()` and a 2D logical mask is generated using OpenCV `inRange()`, where a pixel's value must be within the range of all three channels to register as `true`.
+The tuning method for this filter and other pre-flight testing is described in the next section.
+
+| Channel | Minimum (0-255) | Maximum (0-255) |
+| --- | --- | --- | 
+| Hue | 35 | 120 |
+| Lightness | 5 | 140 |
+| Saturation | 35 | 255 |
+
+Images are retrieved from the queue, masked, and the mask is saved to disk.
+The while these operations execute at an unlocked rate, masking operation takes much longer than 16ms so a framerate of 60Hz is not at all feasible with this method.
+The `FrameMasker` operates on yet another separate thread so as to not block the operations of `PiVideoStream` or `FrameReader` threads. 
 
 ![Flowchart](figures/wuap_uml.png)
 
-- limitations and flaws -> two cameras might be asynchronous
+## Limitations
+The chosen WUAP software implementation method has some significant drawbacks, especially for future experiments where more processing may be desired.
+Asynchronous processing and capture is a good approach for ensuring that raw image capturing does not get held back by slower image processing operations.
+However, since the two threads operate at different rates, the slower thread lags behind and the processing queue grows linearly with time, and can quickly get out of hand.
+Similar issues arise when the video stream and image saving threads run at significantly different rates.
+
+The largest drawback to this implementation is the lack of synchonization between the two WUAP Raspberry Pi SBCs. 
+Each SBC operates independently during flight.
+The only timing synchronization between the two is when they are powered on, since both computers are powered by the same battery pack.
+While the software may take a similar amount of time to startup and the WUAP scripts may run at similar rates for the two boards, there is absolutely no way to relate the timing between images captured on one board to images captured on another besides the timestamp in the image's name.
+Linking image capture timing, or at least having a consistent timing baseline, becomes critical when comparing imagery from the two boards at a given time, since the motion of the entire HAB vehicle may change at significant rates.
 
 ## Pre-Flight Testing
 hab1 data
 google images
+
+Tuning the color range of the mask is critical for producing accurate results.
+During development, the color range was tuned using images from previous HAB flights (HAB1) and Google Earth images.
+
+no tuning before flight
+brown plants
+
+impact of masker running in parallel to reader and stream??
 
 "twin" hardware setup
 
