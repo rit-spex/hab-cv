@@ -101,14 +101,17 @@ The on-board image processing objective is satisfied by doing basic operations o
 Primitive vegetation identification is implemented by creating a logical mask where pixels in a specified value range are registered as `true` while all other pixels are registered as `false`.
 The acceptable color range for vegetation (e.g. colors similar to browns and greens) is most easily defined using the Hue-Saturation-Lightness (HSL) colorspace as opposed to RGB.
 Once again, OpenCV defines the common order for color channels and implements HLS (hue-lightness-saturation).
-The BGR image is transposed to HLS colorspace using OpenCV `cvtColor()` and a 2D logical mask is generated using OpenCV `inRange()`, where a pixel's value must be within the range of all three channels to register as `true`.
+The BGR image is transposed to HLS colorspace using OpenCV [`cvtColor()`](https://docs.opencv.org/3.1.0/de/d25/imgproc_color_conversions.html) and a 2D logical mask is generated using OpenCV `inRange()`, where a pixel's value must be within the range of all three channels to register as `true`.
 The tuning method for this filter and other pre-flight testing is described in the next section.
 
 | Channel | Minimum (0-255) | Maximum (0-255) |
-| --- | --- | --- | 
+| --- | --- | --- |
 | Hue | 35 | 120 |
 | Lightness | 5 | 140 |
 | Saturation | 35 | 255 |
+
+<span style="background: rgb(35,35,34);background: -moz-linear-gradient(left, rgba(35,35,34,1) 0%, rgba(0,137,112,1) 100%);background: -webkit-linear-gradient(left, rgba(35,35,34,1) 0%,rgba(0,137,112,1) 100%);background: linear-gradient(to right, rgba(35,35,34,1) 0%,rgba(0,137,112,1) 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#232322', endColorstr='#008970',GradientType=1 );">
+| Min - - - - - - - - - - - - - - - - - - - - - - - - - -  Max |</span>
 
 Images are retrieved from the queue, masked, and the mask is saved to disk.
 The while these operations execute at an unlocked rate, masking operation takes much longer than 16ms so a framerate of 60Hz is not at all feasible with this method.
@@ -158,6 +161,8 @@ Image data was retrieved from the Raspberry Pi SD memory cards after recovery.
 | BGR images saved | 12,026 | 31,751 |
 | Logical masks saved | 18,297 | 31,745 |
 
+{side by side sample earth image and corresponding mask}
+
 Additional flight data was recorded by HAB4's primary avionics board using a [BME280](https://www.embeddedadventures.com/datasheets/BME280.pdf) sensor.
 
 | | |
@@ -166,22 +171,22 @@ Additional flight data was recorded by HAB4's primary avionics board using a [BM
 | Maximum altitude | 81,916 feet |
 | Balloon burst | 89.4 minutes after launch |
 | Average descent rate | 2,242 feet/min |
-| Balloon lande | 36.4 minutes after burst (125.8 minutes after launch) |
+| Balloon landed | 125.8 minutes after launch (36.4 minutes after burst) |
 | Minimum temperature | -27.66 C |
 | Maximum temperature | 18.48 C |
 | Minimum relative humidity | 2.91% |
 | Maximum relative humidity | 70.60% |
 
 ## Post-Flight Analysis
-summary of notes in notebook
+Operationally, WUAP was a success. The payload module turned on both SBCs, which saved visible Earth images and logical masks from launch until the end of flight.
+All saved images were recovered successfully.
 
-### What went right
-
-### What went wrong
+The primary objective of obtaining a large dataset of Earth-facing images was successful, but not outstanding.
 - video stream super low framerate (should be fine at 60fps http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes)
   - not temp dependent since occurred at sea level
   - not observed in remote testing in california (maybe 15fps?)
 
+The secondary objective to demonstrate on-board processing and primitive vegetation mapping was successful from a technical demonstration, but completely ineffective in terms of the resultant masks.
 - mask is very poor
   - trees werent green!
   - more tuning needed
