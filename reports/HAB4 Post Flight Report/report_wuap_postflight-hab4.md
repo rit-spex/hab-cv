@@ -33,6 +33,7 @@ Each SBC interfaces with a Raspberry Pi Camera Module V2.
 The SBCs and camera modules are housed in an ABS enclosure mounted to the Earth-facing side of the HAB.
 
 ![Annotated HAB4 bus](hardware-images/hab4.PNG)
+
 ![Annotated WUAP CAD]()
 
 Pi Camera Modules are [Sony IMX219PQ](https://www.sony-semicon.co.jp/products_en/new_pro/april_2014/imx219_e.html) visible RGB detectors with small lenses.
@@ -196,6 +197,7 @@ It appears that the cameras very slow video stream framerate of multiple seconds
 This behavior was not observed pre-flight during software testing on the development boards in California.
 
 ![Expected dataset quality]()
+
 ![Image dataset anomaly animation]()
 
 This anomaly is unlikely to be linked to hardware limitations of the sensor or camera module, which is rated to more than 60fps at 640x480 resolution using the PiCamera Python interface.[(source)](http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes)
@@ -205,6 +207,7 @@ A more likely explanation is that the SBCs processors were strained from operati
 The secondary objective to demonstrate on-board processing and primitive vegetation mapping was successful from a technical demonstration, but completely ineffective in terms of the resultant masks.
 
 ![Expected mask quality]()
+
 ![Mask from flight dataset]()
 
 The effectiveness of the HSL color masks is directly related to the effort that was put into tuning the color filters.
