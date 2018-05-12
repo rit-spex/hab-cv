@@ -219,13 +219,12 @@ Additionally, troubleshooting these issues is much more difficult since there wa
 While the constituent parts of the WUAP payload were conceptually well understood, real systems behave in unexpected ways and it is very important to understand the *real* system when developing payloads for flight.
 This includes developing engineering tools that are not used on the payload itself, but rather allow the payload to be well understood in terms of its behavior and performance.
 
-## Future Work
-with WUAP data I want to do the following:
-1) use IMU data to build a map/model of camera viewing angle and the projected area observed, then plot that out on an actual map
-2) compare mask results to NASA vegetation density data for locations observed in the map
-i really want to superimpose our images/masks on a map, and use like extra map data from nasa or whatever like toppgraphy and stuff
-3) use deep learning to build a classifier that identifies vegetation based on RGB visible imagery, using nasa data as ground truth (as an improved mask)
-4) document and publish the results
+### Future Work
+Beyond troubleshooting and examining WUAP images and masks, good science and interesting insights can be gleaned from the existing dataset, especially combined with flight data collected from other sensors and cameras on HAB4.
+- Build a model of camera field of view and projected area observed using IMU and APRS flight data, then superimpose WUAP imagery on a map.
+- Combine projected imagery with public data on geographic topography and vegetation density.
+- Develop a method to identify areas of vegetation and map vegetation density using only visible RGB imagery.
+- Document and publish the results.
 
 ## WUAP2
 If WUAP is selected to fly again on a future RIT SPEX HAB flight, some improvements should be made to the payload in addition to testing and tuning for WUAP2.
