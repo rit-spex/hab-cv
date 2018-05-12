@@ -29,22 +29,23 @@ By collecting near-infrared light for the same scene as the visible light images
 ## Payload Hardware
 The WUAP experiment uses a pair of Raspberry Pi 3 B+ single-board-computers (SBC) for commanding the camera modules, saving images, and on-board image processing.
 The SBCs are powered by a lithium polymer battery.
-Each SBC interfaces with a Raspberry Pi Camera Module V2. 
+Each SBC interfaces with a Raspberry Pi Camera Module V2.
 The SBCs and camera modules are housed in an ABS enclosure mounted to the Earth-facing side of the HAB.
 
-{annotated view of HAB and WUAP module}
+![Annotated HAB4 bus](hardware-images/hab4.PNG)
+![Annotated WUAP CAD]()
 
-Pi Camera Modules are [Sony IMX219PQ](https://www.sony-semicon.co.jp/products_en/new_pro/april_2014/imx219_e.html) visible RGB detectors with small lenses. 
+Pi Camera Modules are [Sony IMX219PQ](https://www.sony-semicon.co.jp/products_en/new_pro/april_2014/imx219_e.html) visible RGB detectors with small lenses.
 While the detector is sensitive to light into the near-infrared, the standard camera module has an infrared filter installed to restrict the spectral response to approximately 400-700 nm.
-To detect near-infrared light, Raspberry Pi Camera NoIR Module is available, which is an identical sensor and optics sans filter. 
+To detect near-infrared light, Raspberry Pi Camera NoIR Module is available, which is an identical sensor and optics sans filter.
 The red channel of the NoIR module is sensitive to approximately 1200 nm.
 
 | Sony IMX219PQ | [(source 1)](https://elinux.org/Rpi_Camera_Module#Technical_Parameters_.28v.2_board.29) [(source 2)](https://www.sony-semicon.co.jp/products_en/new_pro/april_2014/imx219_e.html#Table2) |
 | --- | --- |
-| Sensor Type | 3-color (RGB) CMOS | 
+| Sensor Type | 3-color (RGB) CMOS |
 | Pixel Size | 1.12 x 1.12 micron |
 | Array Size | 3280 x 2464 (active pixels) 3296 x 2512 (total pixels) |
-| Lens Focal Length | 3.04 mm | 
+| Lens Focal Length | 3.04 mm |
 | Lens F-Number | f/2.0 |
 | Angle of View | 62.2 x 48.8 degrees (Full-frame SLR lens equivalent: 29 mm) |
 | Framerate | 60-90fps @ 640x480, 4x4 binning (up to 120fps with overclock) |
@@ -55,24 +56,24 @@ A contributing factor in the decision to use almost entirely commercial off-the-
 The WUAP payload concept and software was developed completely remotely from RIT Space Exploration Mission Control, where the payload components were assembled and integrated.
 While COTS components made it easy to test the payload remotely by buying the same products, the physical separation between payload and HAB integration teams posed new challenges, and is partly responsible for some of the issues encountered during integration.
 
-The NDVI objective was aborted during integration when two days before flight it was discovered that the NoIR camera module purchased by the team included a different lens configuration than the standard Pi Camera V2 and Pi Camera NoIR modules. 
-This was a procurement (and communication) error, and it was decided by the HAB launch team to install a second visible (filtered) Pi Camera V2 module rather than a NoIR module since ordering a replacement part would delay the launch. 
+The NDVI objective was aborted during integration when two days before flight it was discovered that the NoIR camera module purchased by the team included a different lens configuration than the standard Pi Camera V2 and Pi Camera NoIR modules.
+This was a procurement (and communication) error, and it was decided by the HAB launch team to install a second visible (filtered) Pi Camera V2 module rather than a NoIR module since ordering a replacement part would delay the launch.
 For this reason, no data was collected in the near-infrared spectrum for any imagery during the HAB4 flight.
 
 
 ## Payload Software
-Python 3 was used to capture, save, and process images during flight. 
+Python 3 was used to capture, save, and process images during flight.
 Python is easy to implement and easy to read, making development and debugging fast.
 Execution of Python code for image processing is not as fast as a C++ implementation might be, but the team decided to trade development efficiency for execution efficiency.
 Future iterations of flight software for computer vision and imaging payloads might use Python or C++, subject to another similar trade since almost all third party libraries used for WUAP are also available in C++.
 
-Interfacing with the camera modules was handled by the open source [PiCamera](http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes) library. 
+Interfacing with the camera modules was handled by the open source [PiCamera](http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes) library.
 [OpenCV 3.3.1](https://docs.opencv.org/3.3.1/d0/de3/tutorial_py_intro.html) was used to handle and process images.
 An implementation of WUAP was written in [scikit-image](http://scikit-image.org/) due to its easier installation process, but only the OpenCV version of WUAP code was used during flight.
 OpenCV was chosen because of its straightforward image processing tools and because future computer vision processes could make use of OpenCV's extensive toolset.
 
 The WUAP Python script runs as a service upon startup of the SBCs so the software starts on launch day without user input.
-First the script runs a system checkout, cycling through the entire processing loop step by step to check for software, hardware, or interfacing issues that might prevent the code from operating properly. 
+First the script runs a system checkout, cycling through the entire processing loop step by step to check for software, hardware, or interfacing issues that might prevent the code from operating properly.
 This sequence takes approximately 10 seconds and upon completion, all processes are restarted in open loop mode where the script runs continuously until receiving user input or the battery runs out of power.
 
 ### PiVideoStream
@@ -110,12 +111,14 @@ The tuning method for this filter and other pre-flight testing is described in t
 | Lightness | 5 | 140 |
 | Saturation | 35 | 255 |
 
+<!--
 <span style="background: rgb(35,35,34);background: -moz-linear-gradient(left, rgba(35,35,34,1) 0%, rgba(0,137,112,1) 100%);background: -webkit-linear-gradient(left, rgba(35,35,34,1) 0%,rgba(0,137,112,1) 100%);background: linear-gradient(to right, rgba(35,35,34,1) 0%,rgba(0,137,112,1) 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#232322', endColorstr='#008970',GradientType=1 );">
 | Min - - - - - - - - - - - - - - - - - - - - - - - - - -  Max |</span>
+-->
 
 Images are retrieved from the queue, masked, and the mask is saved to disk.
 The while these operations execute at an unlocked rate, masking operation takes much longer than 16ms so a framerate of 60Hz is not at all feasible with this method.
-The `FrameMasker` operates on yet another separate thread so as to not block the operations of `PiVideoStream` or `FrameReader` threads. 
+The `FrameMasker` operates on yet another separate thread so as to not block the operations of `PiVideoStream` or `FrameReader` threads.
 
 ![Flowchart](figures/wuap_uml.png)
 
@@ -125,7 +128,7 @@ Asynchronous processing and capture is a good approach for ensuring that raw ima
 However, since the two threads operate at different rates, the slower thread lags behind and the processing queue grows linearly with time, and can quickly get out of hand.
 Similar issues arise when the video stream and image saving threads run at significantly different rates.
 
-The largest drawback to this implementation is the lack of synchonization between the two WUAP Raspberry Pi SBCs. 
+The largest drawback to this implementation is the lack of synchonization between the two WUAP Raspberry Pi SBCs.
 Each SBC operates independently during flight.
 The only timing synchronization between the two is when they are powered on, since both computers are powered by the same battery pack.
 While the software may take a similar amount of time to startup and the WUAP scripts may run at similar rates for the two boards, there is absolutely no way to relate the timing between images captured on one board to images captured on another besides the timestamp in the image's name.
@@ -138,7 +141,7 @@ WUAP's "twin" consisted of a Raspberry Pi 3 B+ and Pi Camera V2 Modules just lik
 Tuning the color range of the mask is critical for producing accurate results.
 During development, the color range was tuned using images from previous HAB flights (HAB1) and Google Earth images.
 In both cases, the color mask operation was executed outside of WUAP's main codebase and operated on video screen captures on a desktop PC running Windows 10.
-HAB1 took flight on October 25th, 2015 during overcast and rainy weather, and Google Earth data is a composite from many different days and conditions. 
+HAB1 took flight on October 25th, 2015 during overcast and rainy weather, and Google Earth data is a composite from many different days and conditions.
 Neither of these were representative of the clear, April day of HAB4's flight.
 No additional tuning to the color range was conducted prior to the HAB4 flight.
 
@@ -152,7 +155,7 @@ WUAP was developed and integrated by RIT Space Exploration student and alumni me
 No laboratory or testing equipment was available to the development team.
 
 ## Flight Profile
-Where U At Plants (WUAP) flew as a payload on RIT Space Exploration's high altitude balloon [HAB4 mission](http://spex.rit.edu/rit-spex-launches-hab-4/) on April 22, 2018. 
+Where U At Plants (WUAP) flew as a payload on RIT Space Exploration's high altitude balloon [HAB4 mission](http://spex.rit.edu/rit-spex-launches-hab-4/) on April 22, 2018.
 HAB4 launched from RIT at 10:24am EST and landed 2 hours 5 minutes later outside Hector, NY.
 Image data was retrieved from the Raspberry Pi SD memory cards after recovery.
 
@@ -177,27 +180,62 @@ Additional flight data was recorded by HAB4's primary avionics board using a [BM
 | Minimum relative humidity | 2.91% |
 | Maximum relative humidity | 70.60% |
 
+![Broken WUAP camera enclosure](harware-images/wuap-module-postflight.jpg)
+After recovery, the flight WUAP camera enclosure was fractured, but both SBCs, cameras, and memory cards remain intact and functional.
+
 ## Post-Flight Analysis
 Operationally, WUAP was a success. The payload module turned on both SBCs, which saved visible Earth images and logical masks from launch until the end of flight.
-All saved images were recovered successfully.
+All saved images were recovered successfully from the SBC memory cards.
+Unfortunately this is where the successes end for this flight.
 
-The primary objective of obtaining a large dataset of Earth-facing images was successful, but not outstanding.
-- video stream super low framerate (should be fine at 60fps http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes)
-  - not temp dependent since occurred at sea level
-  - not observed in remote testing in california (maybe 15fps?)
+The primary objective of obtaining a large dataset of Earth-facing images was successful, but the quality of the dataset is much worse than anticipated.
+The dataset was expected to be equivalent to video at 60 frames per second.
+While duplicate frames (FramReader sampling faster than the video stream updates) and skipped frames (FrameReader sampling slower than the video stream updates) were expected, the effective delta between real video frames was expected to remain at a constant rate.
+However, the observed images appear to show both of these issues happening at once.
+It appears that the cameras very slow video stream framerate of multiple seconds between video frames *and* a FrameReader sampling rate that was faster than the video stream framerate.
+This behavior was not observed pre-flight during software testing on the development boards in California.
+
+![Expected dataset quality]()
+![Image dataset anomaly animation]()
+
+This anomaly is unlikely to be linked to hardware limitations of the sensor or camera module, which is rated to more than 60fps at 640x480 resolution using the PiCamera Python interface.[(source)](http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes)
+Past SPEX HAB flights experienced issues using GoPro cameras that are thought to be linked to the temperature extremes experienced in layers of the upper atmosphere during flight, but since the issue on WUAP was observed from launch at sea level, significant effects from environmental factors are unlikely.
+A more likely explanation is that the SBCs processors were strained from operating a video stream, writing data to disk, which either led to a lack of processing resources or the SBCs strained their power supply and the computers were unable to pull sufficient current to operate at full speed.
 
 The secondary objective to demonstrate on-board processing and primitive vegetation mapping was successful from a technical demonstration, but completely ineffective in terms of the resultant masks.
-- mask is very poor
-  - trees werent green!
-  - more tuning needed
 
-### What could have been done
-- testing & baseline
-- nir imagery
-- communication/syncing between pis
-- both image streams on one pi, processing on another pi
-- raw images to own queue
+![Expected mask quality]()
+![Mask from flight dataset]()
+
+The effectiveness of the HSL color masks is directly related to the effort that was put into tuning the color filters.
+It is true that the color profile of vegetation on the ground is highly variable with plant species, density, health, and also with weather and seasonal conditions.
+It is feasible to expect the color filter to be able to pass a majority of vegetated areas (forests, farms, yards) and reject clearly artificial areas (buildings, roads) if the filter is calibrated near to the time of the launch itself.
+However, the color filter was manually tuned using Google Maps images and flight images from HAB1 flight in October 2015.
+
+### Lessons Learned
+The WUAP payload suffered from a considerable lack of testing.
+Many of the issues encountered in the resulting dataset were preventable given enough pre-flight testing and calibration.
+Additionally, troubleshooting these issues is much more difficult since there was no baseline performance benchmark to compare against.
+While the constituent parts of the WUAP payload were conceptually well understood, real systems behave in unexpected ways and it is very important to understand the *real* system when developing payloads for flight.
+This includes developing engineering tools that are not used on the payload itself, but rather allow the payload to be well understood in terms of its behavior and performance.
 
 ## Future Work
+with WUAP data I want to do the following:
+1) use IMU data to build a map/model of camera viewing angle and the projected area observed, then plot that out on an actual map
+2) compare mask results to NASA vegetation density data for locations observed in the map
+i really want to superimpose our images/masks on a map, and use like extra map data from nasa or whatever like toppgraphy and stuff
+3) use deep learning to build a classifier that identifies vegetation based on RGB visible imagery, using nasa data as ground truth (as an improved mask)
+4) document and publish the results
 
 ## WUAP2
+If WUAP is selected to fly again on a future RIT SPEX HAB flight, some improvements should be made to the payload in addition to testing and tuning for WUAP2.
+Without any changes to the design scope, near-infrared imagery could be collected by including a Raspberry Pi Camera NoIR module.
+Moreover, the risk of dropped or skipped frames could be resolved by placing video stream frames in a queue much like how the processing queue currently operates.
+
+Expanding the design scope, it would be advantageous to establish some sort of synchrony to images from the two cameras.
+Keeping the architecture using two SBCs, if there was communication between them the image captures could be synchronized.
+A more complicated approach might allow shared processing power between multiple SBCs, perhaps where one SBC handles image capturing and another SBC is solely used for processing.
+
+Lastly, the architecture of using two SBCs with one camera per SBC was chosen purely because it was easy to start developing the payload using a Raspberry Pi and a Pi Camera module, and Raspberry Pis only have one camera interface on the board.
+USB cameras are inexpensive and widely available, and Raspberry Pis (and other SBC types) have multiple USB ports.
+It makes sense to explore using multiple cameras with a single SBC, which solves the issue of synchronizing image captures, but limits available processing power even further.
