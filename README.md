@@ -52,6 +52,9 @@ If either of these conditions are reached, the script obviously is halted and do
 ## Requirements & Dependencies
 Raspberry Pi 3 Model B + Raspbian Stretch Lite (OS),
 Raspberry Pi Camera Module v2 (or Pi Camera NoIR v2)
+
+Be sure to enable the camera within the "Interfacing -> Camera" options within `sudo raspi-config`.
+
 ```shell
 git clone hab-cv
 cd hab-cv
