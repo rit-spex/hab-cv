@@ -182,6 +182,7 @@ Additional flight data was recorded by HAB4's primary avionics board using a [BM
 | Maximum relative humidity | 70.60% |
 
 ![Broken WUAP camera enclosure](harware-images/wuap-module-postflight.jpg)
+
 After recovery, the flight WUAP camera enclosure was fractured, but both SBCs, cameras, and memory cards remain intact and functional.
 
 ## Post-Flight Analysis
