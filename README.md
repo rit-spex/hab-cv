@@ -5,8 +5,9 @@ Where U At Plants? (WUAP) is a high-altitude balloon payload used to gather aeri
 
 This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems.
 
-**Overarching goals and long-term visions for future work is outlined in the following Project Definition Document**:
-https://github.com/RIT-Space-Exploration/SPEX-Project-Definition-Documents/blob/master/HAB-CV/hab-cv.pdf
+## Additional documentation
+* For overarching goals and long-term visions for future work, please read the [**Project Definition Document**](reports/Project%20Definition%20Document/hab-cv.pdf).
+* This payload flew aboard HAB4 on April 22, 2018. Read the [**HAB4 Post Flight Report**](reports/HAB4%20Post%20Flight%20Report/report_wuap_posdtflight-hab4.md) for details.
 
 ![Example of HSL vegetation masking with HAB2 flight images](readme_assets/hsl_test2.gif)
 
