@@ -105,3 +105,10 @@ ENV/
 
 # spacemacs_
 .#*
+
+# vscode
+.vscode/
+
+# DATA FILES
+**/hab4_data/
+*.vsdx
