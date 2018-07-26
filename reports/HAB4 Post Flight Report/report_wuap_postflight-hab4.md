@@ -197,7 +197,7 @@ This behavior was not observed pre-flight during software testing on the develop
 
 | HAB2 GoPro Flight Video | HAB4 WUAP Flight Video |
 | --- | --- |
-| ![Expected dataset quality](./figures/hab2_gopro.gif) [(source)](https://www.youtube.com/watch?v=U40UZp3Z3a4) | ![WUAP Camera 1](./captured-images/wuap_cam1_raw.gif) ![WUAP Camera 2](./captured-images/wuap_cam2_raw.gif) |
+| ![Expected dataset quality](./figures/hab2_gopro.gif) [(source)](https://www.youtube.com/watch?v=U40UZp3Z3a4) | ![WUAP Camera 1](./captured-images/wuap_cam1_raw.mp4) ![WUAP Camera 2](./captured-images/wuap_cam2_raw.mp4) |
 
 This anomaly is unlikely to be linked to hardware limitations of the sensor or camera module, which is rated to more than 60fps at 640x480 resolution using the PiCamera Python interface.[(source)](http://picamera.readthedocs.io/en/release-1.10/fov.html#camera-modes)
 Past SPEX HAB flights experienced issues using GoPro cameras that are thought to be linked to the temperature extremes experienced in layers of the upper atmosphere during flight, but since the issue on WUAP was observed from launch at sea level, significant effects from environmental factors are unlikely.
@@ -207,7 +207,7 @@ The secondary objective to demonstrate on-board processing and primitive vegetat
 
 | Mask algorithm tested on Google Maps screencap | RGB images and masks generated in flight | 
 | --- | --- |
-| ![Expected mask quality](./figures/wuap_mask_test.gif) | ![WUAP Camera 1 Mask](./captured-images/wuap_cam1_mask.gif) ![WUAP Camera 2 Mask](./captured-images/wuap_cam2_mask.gif) |
+| ![Expected mask quality](./figures/wuap_mask_test.gif) | ![WUAP Camera 1 Mask](./captured-images/wuap_cam1_mask.mp4) ![WUAP Camera 2 Mask](./captured-images/wuap_cam2_mask.mp4) |
 
 The effectiveness of the HSL color masks is directly related to the effort that was put into tuning the color filters.
 It is true that the color profile of vegetation on the ground is highly variable with plant species, density, health, and also with weather and seasonal conditions.
