@@ -30,7 +30,7 @@ The SBCs are powered by a lithium polymer battery.
 Each SBC interfaces with a Raspberry Pi Camera Module V2.
 The SBCs and camera modules are housed in an ABS enclosure mounted to the Earth-facing side of the HAB.
 
-![Annotated HAB4 bus](hardware-images/hab4.PNG)
+![Annotated HAB4 bus](./hardware-images/hab4.PNG)
 
 ![Annotated WUAP CAD]()
 
@@ -179,7 +179,7 @@ Additional flight data was recorded by HAB4's primary avionics board using a [BM
 | Minimum relative humidity | 2.91% |
 | Maximum relative humidity | 70.60% |
 
-![Broken WUAP camera enclosure](harware-images/wuap-module-postflight.jpg)
+![Broken WUAP camera enclosure](./hardware-images/wuap-module-postflight.jpg)
 
 After recovery, the flight WUAP camera enclosure was fractured, but both SBCs, cameras, and memory cards remain intact and functional.
 
