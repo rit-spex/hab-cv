@@ -29,22 +29,30 @@ if __name__ == "__main__":
 	fourcc = cv2.VideoWriter_fourcc(*'DIVX')  # use FourCC mpeg4 codec
 	out = cv2.VideoWriter(args.outfile, fourcc, args.fps, args.size)
 
+	framesize = args.size
+	placeholder = np.zeros((framesize[0], framesize[1], 3), dtype=np.uint8)
+	
 	frame_list = [f for f in os.listdir(args.inputdirectory)]
 	print('found %s frames'%str(len(frame_list)))
 	# format debug text
 	font = cv2.FONT_HERSHEY_SIMPLEX
 	bottomLeftCornerOfText = (10, 470)
 	fontScale = 0.5
-	fontColor = (0, 0, 255)
-	lineType = 2
+	fontColor = (0, 0, 255) # BGR uint8
+	lineType = 1
 
 	print('encoding...')
 	for counter, value in enumerate(frame_list):
-		frame = cv2.imread(os.path.join(args.inputdirectory, value))
+		framename = os.path.join(args.inputdirectory, value)
+		frame = cv2.imread(framename)
+		flag = ''  # only use if in error state
+		if frame == None:
+			frame=placeholder
+			flag = ' | corrupted file'
 		if args.flipRGB:
 			frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 		font = cv2.FONT_HERSHEY_SIMPLEX
-		cv2.putText(frame,'frame: ' + str(counter) + ' | ' + value,
+		cv2.putText(frame,'frame: ' + str(counter) + ' | ' + value + flag,
                     bottomLeftCornerOfText,
                     font,
                     fontScale,
