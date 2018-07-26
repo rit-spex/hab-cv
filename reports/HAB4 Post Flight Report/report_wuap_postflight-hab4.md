@@ -4,13 +4,11 @@ Philip Linden
 May 2, 2018
 
 ## Abstract
-[abstract goes here]
-
-## Introduction
 *Where U At Plants?* (WUAP) is a high-altitude balloon payload used to gather aerial image data for future vegetation density analysis.
 WUAP uses on-board image processing with a Raspberry Pi 3, Python 3 and OpenCV 3.3 to mask RGB images of the Earth and attempts to mask areas of high vegetation using colorspace transformations.
 This project is the first of many SPEX experiments with on-board image processing and computer vision on high-altitude balloons and space systems, whose objectives are to demonstrate these technologies to do science and push the limits of lightweight, low-cost hardware.
 
+## Introduction
 The science objective of mapping vegetation density is not driven by a particular scientist or research criteria.
 Rather, it presents a straightforward problem and fertile testbed for developing a variety of key technologies and capabilities that the participants and contributors are interested in.
 WUAP is as much of a technology demonstrator as it is a learning platform and engineering sandbox for student and alumni members of RIT Space Exploration to gain experience designing, integrating, and analyzing data from real-world systems.
@@ -192,7 +190,7 @@ Unfortunately this is where the successes end for this flight.
 
 The primary objective of obtaining a large dataset of Earth-facing images was successful, but the quality of the dataset is much worse than anticipated.
 The dataset was expected to be equivalent to video at 60 frames per second.
-While duplicate frames (FramReader sampling faster than the video stream updates) and skipped frames (FrameReader sampling slower than the video stream updates) were expected, the effective delta between real video frames was expected to remain at a constant rate.
+While duplicate frames (FrameReader sampling faster than the video stream updates) and skipped frames (FrameReader sampling slower than the video stream updates) were expected, the effective delta between real video frames was expected to remain at a constant rate.
 However, the observed images appear to show both of these issues happening at once.
 It appears that the cameras very slow video stream framerate of multiple seconds between video frames *and* a FrameReader sampling rate that was faster than the video stream framerate.
 This behavior was not observed pre-flight during software testing on the development boards in California.
