@@ -205,7 +205,7 @@ A more likely explanation is that the SBCs processors were strained from operati
 
 The secondary objective to demonstrate on-board processing and primitive vegetation mapping was successful from a technical demonstration, but completely ineffective in terms of the resultant masks.
 
-| Mask algorithm tested on Google Maps screencap | RGB images and masks generated in flight | 
+| Mask algorithm tested on Google Maps screen capture | Masks generated from video stream in flight | 
 | --- | --- |
 | ![Expected mask quality](./figures/wuap_mask_test.gif) | ![WUAP Camera 1 Mask](./captured-images/wuap_cam1_mask.mp4) ![WUAP Camera 2 Mask](./captured-images/wuap_cam2_mask.mp4) |
 
