@@ -1,7 +1,7 @@
 # Where U At Plants (WUAP) Technical Report
 Philip Linden
 
-May 2, 2018
+July 27th, 2018
 
 ## Abstract
 *Where U At Plants?* (WUAP) is a high-altitude balloon payload used to gather aerial image data for future vegetation density analysis.
